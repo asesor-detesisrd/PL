@@ -343,8 +343,8 @@ const PTS_PAGE     = 10;
 let att={}, pts={}, sts={}, INC=[], grades=[];
 let cGrade='', cMonth=MONTHS_ORDER[0], ptsPage=0;
 let dirty=false, loaded=false;
-let GS_URL = 'https://script.google.com/macros/s/AKfycbyeF6jiDOaWxjOJmXZfUOzTB3BpuaHZ3NRK2oY6B_VdBWDHcMpivVLGTVWTGhvbO2FmUg/exec';
-localStorage.setItem('gs_url', GS_URL);
+let GS_URL = 'https://script.google.com/macros/s/AKfycbx3SIDeHDwUiznbZkxDw2ZHnfvcUaKpbJclmj-vzpgBGeEeunOXlIrUd2NUVGVxZU7xKw/exec';
+// URL del Apps Script fija
 
 function initState(){
   att={}; pts={}; sts={}; INC=[]; grades=[];
@@ -363,33 +363,23 @@ function setSyncStatus(state, label){
 async function gsRequest(action, payload){
   if(!GS_URL) throw new Error('URL no configurada');
 
-  // Siempre GET — unico metodo que funciona sin CORS desde archivo local
-  // Para setData comprimimos enviando solo lo esencial por grado
-  let url;
   if(action === 'getData'){
-    url = GS_URL + '?action=getData';
-    const res = await fetch(url, {redirect:'follow'});
+    // GET simple — funciona desde HTTPS sin problemas de CORS
+    const res = await fetch(GS_URL + '?action=getData');
     if(!res.ok) throw new Error('HTTP ' + res.status);
     const json = await res.json();
     if(json && json.error) throw new Error(json.error);
     return json;
   }
 
-  // setData: enviar grado por grado para no superar limite de URL
   if(action === 'setData'){
     const {grades, students, att, inc} = payload;
-    // 1. Guardar incidencias
-    const incUrl = GS_URL + '?action=setInc&data=' + encodeURIComponent(JSON.stringify(inc||[]));
-    await fetch(incUrl, {redirect:'follow'});
-    // 2. Guardar cada grado por separado
+    // Guardar incidencias
+    await fetch(GS_URL + '?action=setInc&data=' + encodeURIComponent(JSON.stringify(inc||[])));
+    // Guardar cada grado por separado (evita URLs muy largas)
     for(const g of grades){
-      const chunk = {
-        grade: g,
-        students: students[g]||[],
-        att: att[g]||{}
-      };
-      const chunkUrl = GS_URL + '?action=setGrade&data=' + encodeURIComponent(JSON.stringify(chunk));
-      const res = await fetch(chunkUrl, {redirect:'follow'});
+      const chunk = { grade:g, students:students[g]||[], att:att[g]||{} };
+      const res = await fetch(GS_URL + '?action=setGrade&data=' + encodeURIComponent(JSON.stringify(chunk)));
       if(!res.ok) throw new Error('HTTP '+res.status+' en grado '+g);
       const json = await res.json();
       if(json && json.error) throw new Error(json.error+' (grado '+g+')');
@@ -407,7 +397,7 @@ function saveUrl(){
   const u = document.getElementById('gsUrlModal').value.trim();
   if(!u){toast('Ingresa una URL válida','err');return;}
   GS_URL = u;
-  localStorage.setItem('gs_url', GS_URL);
+  // URL del Apps Script fija
   closeModal('urlModal');
   connectGS();
 }
