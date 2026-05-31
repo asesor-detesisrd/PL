@@ -156,7 +156,7 @@ tr:last-child td{border-bottom:none;}tr:hover td{background:rgba(255,255,255,.02
     <div class="card">
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px;">
         <span style="font-weight:700;font-size:14px" id="lista-title">Lista</span>
-        <input type="date" id="listDate" style="background:var(--sf2);border:1px solid var(--bd);color:var(--tx);padding:6px 10px;border-radius:8px;font-size:13px;">
+        <select id="listDate" style="background:var(--sf2);border:1px solid var(--bd);color:var(--tx);padding:6px 10px;border-radius:8px;font-size:13px;cursor:pointer;"><option value="">-- Selecciona fecha --</option></select>
         <button class="btn btp sm" onclick="markAll('P')">✓ Todos P</button>
         <button class="btn bta sm" onclick="markAll('A')">✗ Todos A</button>
         <button class="btn sm" onclick="clearDay()">↺ Limpiar</button>
@@ -340,11 +340,10 @@ const MAX_SESSIONS = 40;
 const PTS_PAGE     = 10;
 
 // ─── ESTADO ──────────────────────────────────────────────
-let att={}, pts={}, sts={}, INC=[], grades=[];
+let att={}, pts={}, sts={}, INC=[], grades=[], sheetDates={};
 let cGrade='', cMonth=MONTHS_ORDER[0], ptsPage=0;
 let dirty=false, loaded=false;
-let GS_URL = 'https://script.google.com/macros/s/AKfycbyeF6jiDOaWxjOJmXZfUOzTB3BpuaHZ3NRK2oY6B_VdBWDHcMpivVLGTVWTGhvbO2FmUg/exec';
-localStorage.setItem('gs_url', GS_URL);
+let GS_URL = 'https://script.google.com/macros/s/AKfycbx3SIDeHDwUiznbZkxDw2ZHnfvcUaKpbJclmj-vzpgBGeEeunOXlIrUd2NUVGVxZU7xKw/exec';
 
 function initState(){
   att={}; pts={}; sts={}; INC=[]; grades=[];
@@ -360,41 +359,26 @@ function setSyncStatus(state, label){
 }
 
 // ─── GOOGLE SHEETS API ───────────────────────────────────
+async function gsPost(action, payload){
+  const res = await fetch(GS_URL, {
+    method: 'POST',
+    headers: {'Content-Type':'text/plain'},
+    body: JSON.stringify({action, payload})
+  });
+  if(!res.ok) throw new Error('HTTP '+res.status+' ('+action+')');
+  const json = await res.json();
+  if(json && json.error) throw new Error(json.error);
+  return json;
+}
+
 async function gsRequest(action, payload){
   if(!GS_URL) throw new Error('URL no configurada');
-
-  // Siempre GET — unico metodo que funciona sin CORS desde archivo local
-  // Para setData comprimimos enviando solo lo esencial por grado
-  let url;
   if(action === 'getData'){
-    url = GS_URL + '?action=getData';
-    const res = await fetch(url, {redirect:'follow'});
-    if(!res.ok) throw new Error('HTTP ' + res.status);
+    const res = await fetch(GS_URL + '?action=getData');
+    if(!res.ok) throw new Error('HTTP '+res.status);
     const json = await res.json();
     if(json && json.error) throw new Error(json.error);
     return json;
-  }
-
-  // setData: enviar grado por grado para no superar limite de URL
-  if(action === 'setData'){
-    const {grades, students, att, inc} = payload;
-    // 1. Guardar incidencias
-    const incUrl = GS_URL + '?action=setInc&data=' + encodeURIComponent(JSON.stringify(inc||[]));
-    await fetch(incUrl, {redirect:'follow'});
-    // 2. Guardar cada grado por separado
-    for(const g of grades){
-      const chunk = {
-        grade: g,
-        students: students[g]||[],
-        att: att[g]||{}
-      };
-      const chunkUrl = GS_URL + '?action=setGrade&data=' + encodeURIComponent(JSON.stringify(chunk));
-      const res = await fetch(chunkUrl, {redirect:'follow'});
-      if(!res.ok) throw new Error('HTTP '+res.status+' en grado '+g);
-      const json = await res.json();
-      if(json && json.error) throw new Error(json.error+' (grado '+g+')');
-    }
-    return {ok:true};
   }
 }
 
@@ -407,8 +391,7 @@ function saveUrl(){
   const u = document.getElementById('gsUrlModal').value.trim();
   if(!u){toast('Ingresa una URL válida','err');return;}
   GS_URL = u;
-  localStorage.setItem('gs_url', GS_URL);
-  closeModal('urlModal');
+    closeModal('urlModal');
   connectGS();
 }
 
@@ -449,7 +432,10 @@ function applyData(data){
     });
   });
   INC = data.inc || [];
+  // Fechas reales del sheet por grado
+  sheetDates = data.sheetDates || {};
   loaded=true; dirty=false;
+  takeSnapshot();
   document.getElementById('wlc').classList.add('hidden');
   document.getElementById('mainTabs').classList.remove('hidden');
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('hidden'));
@@ -460,22 +446,95 @@ function applyData(data){
 }
 
 // ─── SYNC TO SHEETS ──────────────────────────────────────
+// Snapshot del estado al cargar (para detectar solo los cambios)
+let _attSnapshot  = {};
+let _ptsSnapshot  = {};
+let _incSnapshot  = '';
+
+function takeSnapshot(){
+  _attSnapshot = JSON.parse(JSON.stringify(att));
+  _ptsSnapshot = JSON.parse(JSON.stringify(pts));
+  _incSnapshot = JSON.stringify(INC);
+}
+
 async function syncToSheets(){
   if(!loaded){toast('Conecta primero con Google Sheets','err');return;}
   const btn=document.getElementById('saveBtn');
   btn.disabled=true; btn.textContent='☁ Guardando...';
   setSyncStatus('spin','Guardando...');
   try{
-    const payload={
-      grades,
-      students: Object.fromEntries(grades.map(g=>[g, sts[g].map((s,si)=>({num:s.num,name:s.name,pts:pts[g][si]}))])),
-      att,
-      inc: INC
-    };
-    await gsRequest('setData', payload);
-    dirty=false;
-    setSyncStatus('ok','Guardado · '+new Date().toLocaleTimeString());
-    toast('Guardado en Google Sheets ✓','ok');
+    let totalWritten = 0;
+    const errors = [];
+
+    // ── Asistencia: solo cambios por grado ──
+    for(const g of grades){
+      const changes = {};
+      const attG     = att[g]     || {};
+      const snapG    = _attSnapshot[g] || {};
+      // Detectar cambios: fechas nuevas o modificadas
+      for(const ds of Object.keys(attG)){
+        const curr = attG[ds]   || {};
+        const snap = snapG[ds]  || {};
+        const dayChanges = {};
+        // Valores añadidos o modificados
+        for(const num of Object.keys(curr)){
+          if(curr[num] !== snap[num]) dayChanges[num] = curr[num];
+        }
+        // Valores borrados
+        for(const num of Object.keys(snap)){
+          if(!(num in curr)) dayChanges[num] = '';
+        }
+        if(Object.keys(dayChanges).length > 0) changes[ds] = dayChanges;
+      }
+      // Fechas que existían en el snapshot pero ya no existen (día borrado completo)
+      for(const ds of Object.keys(snapG)){
+        if(!(ds in attG)){
+          const dayChanges = {};
+          for(const num of Object.keys(snapG[ds])) dayChanges[num] = '';
+          if(Object.keys(dayChanges).length > 0) changes[ds] = dayChanges;
+        }
+      }
+      if(Object.keys(changes).length > 0){
+        try{
+          const r = await gsPost('setGrade', {grade:g, changes});
+          totalWritten += r.written || 0;
+        }catch(e){ errors.push('Asistencia '+g+': '+e.message); }
+      }
+    }
+
+    // ── Puntos: solo los estudiantes cuyos puntos cambiaron ──
+    for(const g of grades){
+      const changed = [];
+      (sts[g]||[]).forEach((s,si)=>{
+        const curr = JSON.stringify(pts[g]?.[si]);
+        const snap = JSON.stringify(_ptsSnapshot[g]?.[si]);
+        if(curr !== snap) changed.push({num:s.num, name:s.name, pts:pts[g][si]});
+      });
+      if(changed.length > 0){
+        try{
+          const r = await gsPost('setPts', {grade:g, changes:changed});
+          totalWritten += r.written || 0;
+        }catch(e){ errors.push('Puntos '+g+': '+e.message); }
+      }
+    }
+
+    // ── Incidencias: si cambiaron ──
+    if(JSON.stringify(INC) !== _incSnapshot){
+      try{
+        await gsPost('setInc', INC);
+        totalWritten++;
+      }catch(e){ errors.push('Incidencias: '+e.message); }
+    }
+
+    if(errors.length > 0){
+      setSyncStatus('err','Error parcial al guardar');
+      toast('Errores: '+errors.join(' | '),'err');
+    } else {
+      takeSnapshot(); // actualizar snapshot al éxito total
+      dirty=false;
+      setSyncStatus('ok','Guardado · '+new Date().toLocaleTimeString());
+      toast('Guardado ✓ ('+totalWritten+' celdas)','ok');
+    }
   }catch(e){
     setSyncStatus('err','Error al guardar');
     toast('Error: '+e.message,'err');
@@ -518,7 +577,17 @@ function selG(g,btn,fn){
 function renderLista(){
   gradeBar('grade-bar','selGLista');
   document.getElementById('lista-title').textContent='Lista — '+cGrade;
-  const date=document.getElementById('listDate').value;
+  // Poblar selector de fechas con las que existen en el sheet para este grado
+  const dateEl = document.getElementById('listDate');
+  const prev   = dateEl.value;
+  const dates  = (sheetDates[cGrade] || []).slice().sort();
+  dateEl.innerHTML = '<option value="">-- Selecciona fecha --</option>' +
+    dates.map(d => {
+      const sd = SCHOOL_DATES.find(x=>x.ds===d);
+      const label = sd ? d+' ('+sd.abbr+' '+sd.day+')' : d;
+      return '<option value="'+d+'"'+(d===prev?' selected':'')+'>'+label+'</option>';
+    }).join('');
+  const date=dateEl.value;
   const da=(att[cGrade]&&att[cGrade][date])||{};
   document.getElementById('lista-body').innerHTML=(sts[cGrade]||[]).map(s=>{
     const v=da[s.num]||'';
@@ -871,7 +940,6 @@ window.addEventListener('beforeunload',e=>{
   if(dirty){e.preventDefault();e.returnValue='Hay cambios sin guardar.';}
 });
 
-document.getElementById('listDate').value=new Date().toISOString().split('T')[0];
 document.getElementById('listDate').addEventListener('change',()=>{if(loaded)renderLista();});
 
 // Auto-connect on load
