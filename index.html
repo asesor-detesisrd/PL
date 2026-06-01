@@ -46,7 +46,7 @@ tr:last-child td{border-bottom:none;}tr:hover td{background:rgba(255,255,255,.02
 .month-chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
 .mc{padding:5px 12px;border:1px solid var(--bd);border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;background:var(--sf2);color:var(--mt);transition:.15s;}
 .mc.active{background:var(--ac);border-color:var(--ac);color:#fff;}
-.hcell{text-align:center;font-size:11px;font-weight:700;padding:4px 2px;cursor:pointer;min-width:28px;transition:background .12s;}
+.hcell text-align:center;font-size:11px;font-weight:700;padding:4px 2px;cursor:pointer;min-width:28px;transition:background .12s;}
 .hcell:hover{filter:brightness(1.4);}
 .hcell.P{color:var(--gn);background:rgba(34,197,94,.12);}
 .hcell.A{color:var(--rd);background:rgba(239,68,68,.12);}
@@ -87,14 +87,12 @@ tr:last-child td{border-bottom:none;}tr:hover td{background:rgba(255,255,255,.02
 .gsurl-box input{width:100%;background:var(--bg);border:1px solid var(--bd);color:var(--tx);padding:10px 12px;border-radius:8px;font-size:13px;outline:none;margin-bottom:10px;}
 .gsurl-box input:focus{border-color:var(--ac);}
 .hidden{display:none!important;}
-/* SYNC STATUS */
 .sync-row{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--mt);}
 .sync-dot{width:8px;height:8px;border-radius:50%;background:var(--mt);}
 .sync-dot.ok{background:var(--gn);}
 .sync-dot.err{background:var(--rd);}
 .sync-dot.spin{background:var(--ac);animation:pulse 1s infinite;}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-/* PRINT */
 @media print {
   body{background:#fff;color:#000;}
   header,.tabs,#saveBtn,.btn,.hbtns,.grade-bar,.month-chips,.no-print{display:none!important;}
@@ -156,7 +154,7 @@ tr:last-child td{border-bottom:none;}tr:hover td{background:rgba(255,255,255,.02
     <div class="card">
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px;">
         <span style="font-weight:700;font-size:14px" id="lista-title">Lista</span>
-        <select id="listDate" style="background:var(--sf2);border:1px solid var(--bd);color:var(--tx);padding:6px 10px;border-radius:8px;font-size:13px;cursor:pointer;"><option value="">-- Selecciona fecha --</option></select>
+        <input type="date" id="listDate" style="background:var(--sf2);border:1px solid var(--bd);color:var(--tx);padding:6px 10px;border-radius:8px;font-size:13px;">
         <button class="btn btp sm" onclick="markAll('P')">✓ Todos P</button>
         <button class="btn bta sm" onclick="markAll('A')">✗ Todos A</button>
         <button class="btn sm" onclick="clearDay()">↺ Limpiar</button>
@@ -277,7 +275,7 @@ tr:last-child td{border-bottom:none;}tr:hover td{background:rgba(255,255,255,.02
     </div>
   </div>
 
-</div><!-- /main -->
+</div>
 
 <button id="saveBtn" onclick="syncToSheets()">☁ Guardar en Sheets</button>
 <div class="toast" id="toast"></div>
@@ -335,54 +333,67 @@ tr:last-child td{border-bottom:none;}tr:hover td{background:rgba(255,255,255,.02
 <script>
 const MONTHS_ORDER = ["septiembre", "octubre", "noviembre", "diciembre", "enero", "febrero", "marzo", "abril", "mayo", "junio"];
 const SCHOOL_DATES = [{"ds": "2024-09-01", "month": "septiembre", "day": 1, "abbr": "M"}, {"ds": "2024-09-02", "month": "septiembre", "day": 2, "abbr": "M"}, {"ds": "2024-09-03", "month": "septiembre", "day": 3, "abbr": "J"}, {"ds": "2024-09-04", "month": "septiembre", "day": 4, "abbr": "V"}, {"ds": "2024-09-07", "month": "septiembre", "day": 7, "abbr": "L"}, {"ds": "2024-09-08", "month": "septiembre", "day": 8, "abbr": "M"}, {"ds": "2024-09-09", "month": "septiembre", "day": 9, "abbr": "M"}, {"ds": "2024-09-10", "month": "septiembre", "day": 10, "abbr": "J"}, {"ds": "2024-09-11", "month": "septiembre", "day": 11, "abbr": "V"}, {"ds": "2024-09-14", "month": "septiembre", "day": 14, "abbr": "L"}, {"ds": "2024-09-15", "month": "septiembre", "day": 15, "abbr": "M"}, {"ds": "2024-09-16", "month": "septiembre", "day": 16, "abbr": "M"}, {"ds": "2024-09-17", "month": "septiembre", "day": 17, "abbr": "J"}, {"ds": "2024-09-18", "month": "septiembre", "day": 18, "abbr": "V"}, {"ds": "2024-09-21", "month": "septiembre", "day": 21, "abbr": "L"}, {"ds": "2024-09-22", "month": "septiembre", "day": 22, "abbr": "M"}, {"ds": "2024-09-23", "month": "septiembre", "day": 23, "abbr": "M"}, {"ds": "2024-09-24", "month": "septiembre", "day": 24, "abbr": "J"}, {"ds": "2024-09-25", "month": "septiembre", "day": 25, "abbr": "V"}, {"ds": "2024-09-28", "month": "septiembre", "day": 28, "abbr": "L"}, {"ds": "2024-09-29", "month": "septiembre", "day": 29, "abbr": "M"}, {"ds": "2024-09-30", "month": "septiembre", "day": 30, "abbr": "M"}, {"ds": "2024-10-01", "month": "octubre", "day": 1, "abbr": "J"}, {"ds": "2024-10-02", "month": "octubre", "day": 2, "abbr": "V"}, {"ds": "2024-10-05", "month": "octubre", "day": 5, "abbr": "L"}, {"ds": "2024-10-06", "month": "octubre", "day": 6, "abbr": "M"}, {"ds": "2024-10-07", "month": "octubre", "day": 7, "abbr": "M"}, {"ds": "2024-10-08", "month": "octubre", "day": 8, "abbr": "J"}, {"ds": "2024-10-09", "month": "octubre", "day": 9, "abbr": "V"}, {"ds": "2024-10-12", "month": "octubre", "day": 12, "abbr": "L"}, {"ds": "2024-10-13", "month": "octubre", "day": 13, "abbr": "M"}, {"ds": "2024-10-14", "month": "octubre", "day": 14, "abbr": "M"}, {"ds": "2024-10-15", "month": "octubre", "day": 15, "abbr": "J"}, {"ds": "2024-10-16", "month": "octubre", "day": 16, "abbr": "V"}, {"ds": "2024-10-19", "month": "octubre", "day": 19, "abbr": "L"}, {"ds": "2024-10-20", "month": "octubre", "day": 20, "abbr": "M"}, {"ds": "2024-10-21", "month": "octubre", "day": 21, "abbr": "M"}, {"ds": "2024-10-22", "month": "octubre", "day": 22, "abbr": "J"}, {"ds": "2024-10-23", "month": "octubre", "day": 23, "abbr": "V"}, {"ds": "2024-10-26", "month": "octubre", "day": 26, "abbr": "L"}, {"ds": "2024-10-27", "month": "octubre", "day": 27, "abbr": "M"}, {"ds": "2024-10-28", "month": "octubre", "day": 28, "abbr": "M"}, {"ds": "2024-10-29", "month": "octubre", "day": 29, "abbr": "J"}, {"ds": "2024-10-30", "month": "octubre", "day": 30, "abbr": "V"}, {"ds": "2024-11-02", "month": "noviembre", "day": 2, "abbr": "L"}, {"ds": "2024-11-03", "month": "noviembre", "day": 3, "abbr": "M"}, {"ds": "2024-11-04", "month": "noviembre", "day": 4, "abbr": "M"}, {"ds": "2024-11-05", "month": "noviembre", "day": 5, "abbr": "J"}, {"ds": "2024-11-06", "month": "noviembre", "day": 6, "abbr": "V"}, {"ds": "2024-11-09", "month": "noviembre", "day": 9, "abbr": "L"}, {"ds": "2024-11-10", "month": "noviembre", "day": 10, "abbr": "M"}, {"ds": "2024-11-11", "month": "noviembre", "day": 11, "abbr": "M"}, {"ds": "2024-11-12", "month": "noviembre", "day": 12, "abbr": "J"}, {"ds": "2024-11-13", "month": "noviembre", "day": 13, "abbr": "V"}, {"ds": "2024-11-16", "month": "noviembre", "day": 16, "abbr": "L"}, {"ds": "2024-11-17", "month": "noviembre", "day": 17, "abbr": "M"}, {"ds": "2024-11-18", "month": "noviembre", "day": 18, "abbr": "M"}, {"ds": "2024-11-19", "month": "noviembre", "day": 19, "abbr": "J"}, {"ds": "2024-11-20", "month": "noviembre", "day": 20, "abbr": "V"}, {"ds": "2024-11-23", "month": "noviembre", "day": 23, "abbr": "L"}, {"ds": "2024-11-24", "month": "noviembre", "day": 24, "abbr": "M"}, {"ds": "2024-11-25", "month": "noviembre", "day": 25, "abbr": "M"}, {"ds": "2024-11-26", "month": "noviembre", "day": 26, "abbr": "J"}, {"ds": "2024-11-27", "month": "noviembre", "day": 27, "abbr": "V"}, {"ds": "2024-11-30", "month": "noviembre", "day": 30, "abbr": "L"}, {"ds": "2024-12-01", "month": "diciembre", "day": 1, "abbr": "M"}, {"ds": "2024-12-02", "month": "diciembre", "day": 2, "abbr": "M"}, {"ds": "2024-12-03", "month": "diciembre", "day": 3, "abbr": "J"}, {"ds": "2024-12-04", "month": "diciembre", "day": 4, "abbr": "V"}, {"ds": "2024-12-07", "month": "diciembre", "day": 7, "abbr": "L"}, {"ds": "2024-12-08", "month": "diciembre", "day": 8, "abbr": "M"}, {"ds": "2024-12-09", "month": "diciembre", "day": 9, "abbr": "M"}, {"ds": "2024-12-10", "month": "diciembre", "day": 10, "abbr": "J"}, {"ds": "2024-12-11", "month": "diciembre", "day": 11, "abbr": "V"}, {"ds": "2024-12-14", "month": "diciembre", "day": 14, "abbr": "L"}, {"ds": "2024-12-15", "month": "diciembre", "day": 15, "abbr": "M"}, {"ds": "2024-12-16", "month": "diciembre", "day": 16, "abbr": "M"}, {"ds": "2024-12-17", "month": "diciembre", "day": 17, "abbr": "J"}, {"ds": "2024-12-18", "month": "diciembre", "day": 18, "abbr": "V"}, {"ds": "2024-12-21", "month": "diciembre", "day": 21, "abbr": "L"}, {"ds": "2024-12-22", "month": "diciembre", "day": 22, "abbr": "M"}, {"ds": "2024-12-23", "month": "diciembre", "day": 23, "abbr": "M"}, {"ds": "2024-12-24", "month": "diciembre", "day": 24, "abbr": "J"}, {"ds": "2024-12-25", "month": "diciembre", "day": 25, "abbr": "V"}, {"ds": "2024-12-28", "month": "diciembre", "day": 28, "abbr": "L"}, {"ds": "2024-12-29", "month": "diciembre", "day": 29, "abbr": "M"}, {"ds": "2024-12-30", "month": "diciembre", "day": 30, "abbr": "M"}, {"ds": "2024-12-31", "month": "diciembre", "day": 31, "abbr": "J"}, {"ds": "2025-01-01", "month": "enero", "day": 1, "abbr": "V"}, {"ds": "2025-01-04", "month": "enero", "day": 4, "abbr": "L"}, {"ds": "2025-01-05", "month": "enero", "day": 5, "abbr": "M"}, {"ds": "2025-01-06", "month": "enero", "day": 6, "abbr": "M"}, {"ds": "2025-01-07", "month": "enero", "day": 7, "abbr": "J"}, {"ds": "2025-01-08", "month": "enero", "day": 8, "abbr": "V"}, {"ds": "2025-01-11", "month": "enero", "day": 11, "abbr": "L"}, {"ds": "2025-01-12", "month": "enero", "day": 12, "abbr": "M"}, {"ds": "2025-01-13", "month": "enero", "day": 13, "abbr": "M"}, {"ds": "2025-01-14", "month": "enero", "day": 14, "abbr": "J"}, {"ds": "2025-01-15", "month": "enero", "day": 15, "abbr": "V"}, {"ds": "2025-01-18", "month": "enero", "day": 18, "abbr": "L"}, {"ds": "2025-01-19", "month": "enero", "day": 19, "abbr": "M"}, {"ds": "2025-01-20", "month": "enero", "day": 20, "abbr": "M"}, {"ds": "2025-01-21", "month": "enero", "day": 21, "abbr": "J"}, {"ds": "2025-01-22", "month": "enero", "day": 22, "abbr": "V"}, {"ds": "2025-01-25", "month": "enero", "day": 25, "abbr": "L"}, {"ds": "2025-01-26", "month": "enero", "day": 26, "abbr": "M"}, {"ds": "2025-01-27", "month": "enero", "day": 27, "abbr": "M"}, {"ds": "2025-01-28", "month": "enero", "day": 28, "abbr": "J"}, {"ds": "2025-01-29", "month": "enero", "day": 29, "abbr": "V"}, {"ds": "2025-02-02", "month": "febrero", "day": 2, "abbr": "L"}, {"ds": "2025-02-03", "month": "febrero", "day": 3, "abbr": "M"}, {"ds": "2025-02-04", "month": "febrero", "day": 4, "abbr": "M"}, {"ds": "2025-02-05", "month": "febrero", "day": 5, "abbr": "J"}, {"ds": "2025-02-06", "month": "febrero", "day": 6, "abbr": "V"}, {"ds": "2025-02-08", "month": "febrero", "day": 8, "abbr": "L"}, {"ds": "2025-02-10", "month": "febrero", "day": 10, "abbr": "M"}, {"ds": "2025-02-11", "month": "febrero", "day": 11, "abbr": "M"}, {"ds": "2025-02-12", "month": "febrero", "day": 12, "abbr": "J"}, {"ds": "2025-02-13", "month": "febrero", "day": 13, "abbr": "V"}, {"ds": "2025-02-16", "month": "febrero", "day": 16, "abbr": "L"}, {"ds": "2025-02-17", "month": "febrero", "day": 17, "abbr": "M"}, {"ds": "2025-02-18", "month": "febrero", "day": 18, "abbr": "M"}, {"ds": "2025-02-19", "month": "febrero", "day": 19, "abbr": "J"}, {"ds": "2025-02-20", "month": "febrero", "day": 20, "abbr": "V"}, {"ds": "2025-02-23", "month": "febrero", "day": 23, "abbr": "L"}, {"ds": "2025-02-24", "month": "febrero", "day": 24, "abbr": "M"}, {"ds": "2025-02-25", "month": "febrero", "day": 25, "abbr": "M"}, {"ds": "2025-02-26", "month": "febrero", "day": 26, "abbr": "J"}, {"ds": "2025-02-27", "month": "febrero", "day": 27, "abbr": "V"}, {"ds": "2025-03-02", "month": "marzo", "day": 2, "abbr": "L"}, {"ds": "2025-03-03", "month": "marzo", "day": 3, "abbr": "M"}, {"ds": "2025-03-04", "month": "marzo", "day": 4, "abbr": "M"}, {"ds": "2025-03-05", "month": "marzo", "day": 5, "abbr": "J"}, {"ds": "2025-03-06", "month": "marzo", "day": 6, "abbr": "V"}, {"ds": "2025-03-09", "month": "marzo", "day": 9, "abbr": "L"}, {"ds": "2025-03-10", "month": "marzo", "day": 10, "abbr": "M"}, {"ds": "2025-03-11", "month": "marzo", "day": 11, "abbr": "M"}, {"ds": "2025-03-12", "month": "marzo", "day": 12, "abbr": "J"}, {"ds": "2025-03-13", "month": "marzo", "day": 13, "abbr": "V"}, {"ds": "2025-03-16", "month": "marzo", "day": 16, "abbr": "L"}, {"ds": "2025-03-17", "month": "marzo", "day": 17, "abbr": "M"}, {"ds": "2025-03-18", "month": "marzo", "day": 18, "abbr": "M"}, {"ds": "2025-03-19", "month": "marzo", "day": 19, "abbr": "J"}, {"ds": "2025-03-20", "month": "marzo", "day": 20, "abbr": "V"}, {"ds": "2025-03-23", "month": "marzo", "day": 23, "abbr": "L"}, {"ds": "2025-03-24", "month": "marzo", "day": 24, "abbr": "M"}, {"ds": "2025-03-25", "month": "marzo", "day": 25, "abbr": "M"}, {"ds": "2025-03-26", "month": "marzo", "day": 26, "abbr": "J"}, {"ds": "2025-03-27", "month": "marzo", "day": 27, "abbr": "V"}, {"ds": "2025-03-30", "month": "marzo", "day": 30, "abbr": "L"}, {"ds": "2025-03-31", "month": "marzo", "day": 31, "abbr": "M"}, {"ds": "2025-04-01", "month": "abril", "day": 1, "abbr": "M"}, {"ds": "2025-04-02", "month": "abril", "day": 2, "abbr": "J"}, {"ds": "2025-04-03", "month": "abril", "day": 3, "abbr": "V"}, {"ds": "2025-04-06", "month": "abril", "day": 6, "abbr": "L"}, {"ds": "2025-04-07", "month": "abril", "day": 7, "abbr": "M"}, {"ds": "2025-04-08", "month": "abril", "day": 8, "abbr": "M"}, {"ds": "2025-04-09", "month": "abril", "day": 9, "abbr": "J"}, {"ds": "2025-04-10", "month": "abril", "day": 10, "abbr": "V"}, {"ds": "2025-04-13", "month": "abril", "day": 13, "abbr": "L"}, {"ds": "2025-04-14", "month": "abril", "day": 14, "abbr": "M"}, {"ds": "2025-04-15", "month": "abril", "day": 15, "abbr": "M"}, {"ds": "2025-04-16", "month": "abril", "day": 16, "abbr": "J"}, {"ds": "2025-04-17", "month": "abril", "day": 17, "abbr": "V"}, {"ds": "2025-04-20", "month": "abril", "day": 20, "abbr": "L"}, {"ds": "2025-04-21", "month": "abril", "day": 21, "abbr": "M"}, {"ds": "2025-04-22", "month": "abril", "day": 22, "abbr": "M"}, {"ds": "2025-04-23", "month": "abril", "day": 23, "abbr": "J"}, {"ds": "2025-04-24", "month": "abril", "day": 24, "abbr": "V"}, {"ds": "2025-04-27", "month": "abril", "day": 27, "abbr": "L"}, {"ds": "2025-04-28", "month": "abril", "day": 28, "abbr": "M"}, {"ds": "2025-04-29", "month": "abril", "day": 29, "abbr": "M"}, {"ds": "2025-04-30", "month": "abril", "day": 30, "abbr": "J"}, {"ds": "2025-05-01", "month": "mayo", "day": 1, "abbr": "V"}, {"ds": "2025-05-04", "month": "mayo", "day": 4, "abbr": "L"}, {"ds": "2025-05-05", "month": "mayo", "day": 5, "abbr": "M"}, {"ds": "2025-05-06", "month": "mayo", "day": 6, "abbr": "M"}, {"ds": "2025-05-07", "month": "mayo", "day": 7, "abbr": "J"}, {"ds": "2025-05-08", "month": "mayo", "day": 8, "abbr": "V"}, {"ds": "2025-05-11", "month": "mayo", "day": 11, "abbr": "L"}, {"ds": "2025-05-12", "month": "mayo", "day": 12, "abbr": "M"}, {"ds": "2025-05-13", "month": "mayo", "day": 13, "abbr": "M"}, {"ds": "2025-05-14", "month": "mayo", "day": 14, "abbr": "J"}, {"ds": "2025-05-15", "month": "mayo", "day": 15, "abbr": "V"}, {"ds": "2025-05-18", "month": "mayo", "day": 18, "abbr": "L"}, {"ds": "2025-05-19", "month": "mayo", "day": 19, "abbr": "M"}, {"ds": "2025-05-20", "month": "mayo", "day": 20, "abbr": "M"}, {"ds": "2025-05-21", "month": "mayo", "day": 21, "abbr": "J"}, {"ds": "2025-05-22", "month": "mayo", "day": 22, "abbr": "V"}, {"ds": "2025-05-25", "month": "mayo", "day": 25, "abbr": "L"}, {"ds": "2025-05-26", "month": "mayo", "day": 26, "abbr": "M"}, {"ds": "2025-05-27", "month": "mayo", "day": 27, "abbr": "M"}, {"ds": "2025-05-28", "month": "mayo", "day": 28, "abbr": "J"}, {"ds": "2025-05-29", "month": "mayo", "day": 29, "abbr": "V"}, {"ds": "2025-06-01", "month": "junio", "day": 1, "abbr": "L"}, {"ds": "2025-06-02", "month": "junio", "day": 2, "abbr": "M"}, {"ds": "2025-06-03", "month": "junio", "day": 3, "abbr": "M"}, {"ds": "2025-06-04", "month": "junio", "day": 4, "abbr": "J"}, {"ds": "2025-06-05", "month": "junio", "day": 5, "abbr": "V"}, {"ds": "2025-06-08", "month": "junio", "day": 8, "abbr": "L"}, {"ds": "2025-06-09", "month": "junio", "day": 9, "abbr": "M"}, {"ds": "2025-06-10", "month": "junio", "day": 10, "abbr": "M"}, {"ds": "2025-06-11", "month": "junio", "day": 11, "abbr": "J"}, {"ds": "2025-06-12", "month": "junio", "day": 12, "abbr": "V"}, {"ds": "2025-06-15", "month": "junio", "day": 15, "abbr": "L"}, {"ds": "2025-06-16", "month": "junio", "day": 16, "abbr": "M"}, {"ds": "2025-06-17", "month": "junio", "day": 17, "abbr": "M"}, {"ds": "2025-06-18", "month": "junio", "day": 18, "abbr": "J"}, {"ds": "2025-06-19", "month": "junio", "day": 19, "abbr": "V"}, {"ds": "2025-06-22", "month": "junio", "day": 22, "abbr": "L"}, {"ds": "2025-06-23", "month": "junio", "day": 23, "abbr": "M"}, {"ds": "2025-06-24", "month": "junio", "day": 24, "abbr": "M"}, {"ds": "2025-06-25", "month": "junio", "day": 25, "abbr": "J"}, {"ds": "2025-06-26", "month": "junio", "day": 26, "abbr": "V"}, {"ds": "2025-06-29", "month": "junio", "day": 29, "abbr": "L"}, {"ds": "2025-06-30", "month": "junio", "day": 30, "abbr": "M"}];
-const INC_SEED     = [{"num": 1, "meta": "04/11/2025\n4B \nKADEN ENRIQUE CALDERON CASTRO", "desc": "Durante una reunión con la coordinadora del segundo ciclo, se me informó que este estudiante poseía una caja de fósforos. Posteriormente, se notificó a la maestra encargada del curso sobre esta situación. Al regresar al aula, se constató que el estudiante había estado involucrado en un incidente con otro alumno, Yefri Estime, quien fue agredido por Kaden. Yefri fue derribado por Germán y Kaden, y este último comenzó a golpearlo en la cabeza. En respuesta, Yefri se defendió, y Kaden lo amenazó con golpearlo en la cabeza con un termo de acero azul.\n\nPosteriormente, sostuve una conversación con el estudiante, logrando persuadirlo de no agredir a nadie. Él expresó que no tiene con quién jugar y que estaba jugando. Le expliqué que esa no es la manera adecuada de hacer amigos ni de jugar. El estudiante comprendió la situación y se comprometió a mejorar su comportamiento. Asimismo, prometió no volver a traer fósforos a la escuela.", "testigos": "YUMAILIN\nYORDAN\nGERMAN\nENTRE OTROS.", "acciones": "CHARLA CON EL ESTUDIANTE Y AMONESTACION VERBAL.\n", "seg": "VER MAS ADELANTE SI ESTE A MEJORADO\n", "estado": "closed", "notas": ""}, {"num": 2, "meta": "06/11/2025\n5B\nYENDER ALEXIS MERCEDES ROMERO", "desc": "Este estudiante exhibe un patrón de comportamiento disruptivo en el aula, manipulando el mobiliario de manera inapropiada. Adicionalmente, se observa una resistencia constante a participar en las actividades académicas y a completar las tareas asignadas, manifestada a través de la búsqueda de excusas. A pesar de las reiteradas llamadas de atención, la conducta persiste. Por lo tanto, se emite este informe con el objetivo de documentar la situación y buscar una mejora en su comportamiento.", "testigos": "TODOS LOS ESTUDIANTES DEL MISMO CURSO\n", "acciones": "AMONESTACION VERBAL\n", "seg": "VER MAS ADELANTE SI ESTE A MEJORADO\n", "estado": "closed", "notas": ""}, {"num": 3, "meta": "09/12/2025\n4to B\nGERMAN JOSE CALDERON", "desc": "A principios de este año, el estudiante demostró un notable entusiasmo por las clases, participando activamente en todas ellas. Sin embargo, en las últimas dos semanas, hemos observado un cambio en su comportamiento, manifestado en distracciones durante las clases, ausencias del aula y una falta de cumplimiento con las tareas asignadas.", "testigos": "TODOS LOS ESTUDIANTES DEL MISMO CURSO\n", "acciones": "AMONESTACION VERBAL\n", "seg": "VER MAS ADELANTE SI ESTE A MEJORADO\n", "estado": "closed", "notas": "ESTE NO HA MOSTRADO MEJORIAS"}, {"num": 4, "meta": "17/2/2026\n4to B\nGERMAN JOSE CALDERON", "desc": "EL ESTUDIANTE GERMAN LLEVA VARIAS CLASE SALIENDO SIN PERMISO DE MANERA SIGILOSA SIN DARME CUENTA Y SE PASA LA CLASE COMPLETA A FUERA SIN HACER NADA. EN EL DIA DE HOY LO PUDE VER CUANDO IBA SALIENDO SIN PERMISO Y LO RETUVE LE DIJE QUE NO SALIERA Y QUE SE MANTUVIERA DENTRO DEL AULA A LO QUE EL ESTUDIANTE REACCIONO MOLESTO Y DIJO QUE PREFERIA IRSE. DADO ESTO LO LLEVE A LA DIRECCION PARA VER QUE SE PODIA HACER EN ESE CASO YA QUE EL ESTUDIANTE SE LA PASA PASILLANDO. ENTONCES EN LA DIRECCION LO DEJARON SENTADO Y EL ESTUDIANTE SALIO DE LA DIRECCION, ENTONCES LA SIXTA PROCEDIO A LLAMAR A ALGUN FAMILIAR PARA QUE VENGA POR EL O PARA VER QUE ES LO QUE ESTA SUCEDIENDO CON EL NIÑO. LLEGO UNA SEÑORA LA CUAL COMENTO QUE ES SU ABUELA  DE NOMBRE TINITA, LA MISMA HABLO CON EL Y CONMIGO Y QUEDO QUE EL MISMO IBA A REALIZAR LA ASIGNACION QUE SE LE HABIA COLOCADO. LA ABUELA ME DIJO QUE SI ESTE NO LA REALIZABA QUE LE DIJERA.\n", "testigos": "", "acciones": "AMONESTACION VERBAL\n", "seg": "VER SI ESTE REALIZA LO QUE SE LE HA ASIGNADO\n", "estado": "open", "notas": ""}, {"num": 5, "meta": "03/03/2026\n5TO B\nYEIRON Y EZEQUIEL", "desc": "LLEGUE EN HORARIO DE LA 12:55 AL CURSO Y ME ENCONTRE CON QUE ESTOS DOS ESTUDIANTES HABIAN PELEADO, PRODUCTO DE UN JUEGO DE MANO QUE ESTO TENIANPREVIAMENTE LO CUAL PROVOCO DICHA PELEA SEGÚN LOS MENCIONADO. PROCEDI A PREGUNTAR Y A DIALOGAR CON LOS ESTUDIANTES PARA QUE ESTOS NO SIGUIERAN CON LA PELEA. AUNQUE EZEQUIEL DIJO QUE NO QUERIA QUEDARSE CON ESA Y QUE CUANDO SALIERAN IBAN A VOLVER A PELEAR LE ACONSEJE NO HACERLO Y A YERIRON NO HACERLE CASO E IRSE PARA SU CASA.", "testigos": "TODOS\n", "acciones": "AMONESTACION VERBAL\n", "seg": "", "estado": "open", "notas": ""}];
+const INC_SEED     = [];
 const MAX_SESSIONS = 40;
 const PTS_PAGE     = 10;
 
-// ─── ESTADO ──────────────────────────────────────────────
-let att={}, pts={}, sts={}, INC=[], grades=[], sheetDates={};
+let att={}, pts={}, sts={}, INC=[], grades=[];
 let cGrade='', cMonth=MONTHS_ORDER[0], ptsPage=0;
 let dirty=false, loaded=false;
-let GS_URL = 'https://script.google.com/macros/s/AKfycbyeF6jiDOaWxjOJmXZfUOzTB3BpuaHZ3NRK2oY6B_VdBWDHcMpivVLGTVWTGhvbO2FmUg/exec';
+let GS_URL = localStorage.getItem('gs_url') || '';
 
 function initState(){
   att={}; pts={}; sts={}; INC=[]; grades=[];
   cGrade=''; cMonth=MONTHS_ORDER[0]; ptsPage=0;
 }
 
-// ─── SYNC STATUS UI ──────────────────────────────────────
 function setSyncStatus(state, label){
   const dot=document.getElementById('syncDot');
   const lbl=document.getElementById('syncLbl');
+  if(!dot || !lbl) return;
   dot.className='sync-dot'+(state?' '+state:'');
   lbl.textContent=label;
 }
 
-// ─── GOOGLE SHEETS API ───────────────────────────────────
-async function gsPost(action, payload){
-  const res = await fetch(GS_URL, {
-    method: 'POST',
-    headers: {'Content-Type':'text/plain'},
-    body: JSON.stringify({action, payload})
-  });
-  if(!res.ok) throw new Error('HTTP '+res.status+' ('+action+')');
-  const json = await res.json();
-  if(json && json.error) throw new Error(json.error);
-  return json;
-}
-
 async function gsRequest(action, payload){
   if(!GS_URL) throw new Error('URL no configurada');
+  
   if(action === 'getData'){
-    const res = await fetch(GS_URL + '?action=getData');
-    if(!res.ok) throw new Error('HTTP '+res.status);
+    const url = GS_URL + '?action=getData';
+    const res = await fetch(url, {method: 'GET', redirect:'follow'});
+    if(!res.ok) throw new Error('HTTP ' + res.status);
     const json = await res.json();
     if(json && json.error) throw new Error(json.error);
     return json;
   }
+
+  if(action === 'setData'){
+    // Enviamos primero las incidencias por POST completo
+    await fetch(GS_URL + '?action=setInc', {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(payload.inc || [])
+    });
+
+    // Guardamos grado por grado usando POST para evitar cortes de URL
+    for(const g of payload.grades){
+      const chunk = {
+        grade: g,
+        students: payload.students[g] || [],
+        att: payload.att[g] || {}
+      };
+      await fetch(GS_URL + '?action=setGrade', {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(chunk)
+      });
+    }
+    return {ok:true};
+  }
 }
 
-// ─── CONNECT ─────────────────────────────────────────────
 function showUrlModal(){
   document.getElementById('gsUrlModal').value = GS_URL;
   document.getElementById('urlModal').classList.add('show');
@@ -391,11 +402,16 @@ function saveUrl(){
   const u = document.getElementById('gsUrlModal').value.trim();
   if(!u){toast('Ingresa una URL válida','err');return;}
   GS_URL = u;
-    closeModal('urlModal');
+  localStorage.setItem('gs_url', GS_URL);
+  closeModal('urlModal');
   connectGS();
 }
 
 async function connectGS(){
+  if(!GS_URL) {
+    showUrlModal();
+    return;
+  }
   setSyncStatus('spin','Conectando...');
   document.getElementById('wlcMsg').textContent='⏳ Conectando con Google Sheets...';
   document.getElementById('wlcBox').style.display='none';
@@ -414,14 +430,13 @@ async function connectGS(){
   }
 }
 
-// ─── PARSE DATA FROM SHEETS ──────────────────────────────
 function applyData(data){
   initState();
   grades = data.grades || [];
   cGrade = grades[0] || '';
   grades.forEach(g=>{
     att[g]={};
-    sts[g]=(data.students[g]||[]).map(s=>({num:s.num,name:s.name}));
+    sts[g]=(data.students[g]||[]).map(s=>({num:parseInt(s.num),name:s.name}));
     pts[g]=(data.students[g]||[]).map(s=>s.pts||Array(MAX_SESSIONS).fill(null));
     const attG = data.att[g] || {};
     Object.entries(attG).forEach(([ds,dayAtt])=>{
@@ -432,10 +447,7 @@ function applyData(data){
     });
   });
   INC = data.inc || [];
-  // Fechas reales del sheet por grado
-  sheetDates = data.sheetDates || {};
   loaded=true; dirty=false;
-  takeSnapshot();
   document.getElementById('wlc').classList.add('hidden');
   document.getElementById('mainTabs').classList.remove('hidden');
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('hidden'));
@@ -445,96 +457,22 @@ function applyData(data){
   renderLista();
 }
 
-// ─── SYNC TO SHEETS ──────────────────────────────────────
-// Snapshot del estado al cargar (para detectar solo los cambios)
-let _attSnapshot  = {};
-let _ptsSnapshot  = {};
-let _incSnapshot  = '';
-
-function takeSnapshot(){
-  _attSnapshot = JSON.parse(JSON.stringify(att));
-  _ptsSnapshot = JSON.parse(JSON.stringify(pts));
-  _incSnapshot = JSON.stringify(INC);
-}
-
-async function syncToSheets(){
+async function syncToSheets() {
   if(!loaded){toast('Conecta primero con Google Sheets','err');return;}
   const btn=document.getElementById('saveBtn');
   btn.disabled=true; btn.textContent='☁ Guardando...';
   setSyncStatus('spin','Guardando...');
   try{
-    let totalWritten = 0;
-    const errors = [];
-
-    // ── Asistencia: solo cambios por grado ──
-    for(const g of grades){
-      const changes = {};
-      const attG     = att[g]     || {};
-      const snapG    = _attSnapshot[g] || {};
-      // Detectar cambios: fechas nuevas o modificadas
-      for(const ds of Object.keys(attG)){
-        const curr = attG[ds]   || {};
-        const snap = snapG[ds]  || {};
-        const dayChanges = {};
-        // Valores añadidos o modificados
-        for(const num of Object.keys(curr)){
-          if(curr[num] !== snap[num]) dayChanges[num] = curr[num];
-        }
-        // Valores borrados
-        for(const num of Object.keys(snap)){
-          if(!(num in curr)) dayChanges[num] = '';
-        }
-        if(Object.keys(dayChanges).length > 0) changes[ds] = dayChanges;
-      }
-      // Fechas que existían en el snapshot pero ya no existen (día borrado completo)
-      for(const ds of Object.keys(snapG)){
-        if(!(ds in attG)){
-          const dayChanges = {};
-          for(const num of Object.keys(snapG[ds])) dayChanges[num] = '';
-          if(Object.keys(dayChanges).length > 0) changes[ds] = dayChanges;
-        }
-      }
-      if(Object.keys(changes).length > 0){
-        try{
-          const r = await gsPost('setGrade', {grade:g, changes});
-          totalWritten += r.written || 0;
-        }catch(e){ errors.push('Asistencia '+g+': '+e.message); }
-      }
-    }
-
-    // ── Puntos: solo los estudiantes cuyos puntos cambiaron ──
-    for(const g of grades){
-      const changed = [];
-      (sts[g]||[]).forEach((s,si)=>{
-        const curr = JSON.stringify(pts[g]?.[si]);
-        const snap = JSON.stringify(_ptsSnapshot[g]?.[si]);
-        if(curr !== snap) changed.push({num:s.num, name:s.name, pts:pts[g][si]});
-      });
-      if(changed.length > 0){
-        try{
-          const r = await gsPost('setPts', {grade:g, changes:changed});
-          totalWritten += r.written || 0;
-        }catch(e){ errors.push('Puntos '+g+': '+e.message); }
-      }
-    }
-
-    // ── Incidencias: si cambiaron ──
-    if(JSON.stringify(INC) !== _incSnapshot){
-      try{
-        await gsPost('setInc', INC);
-        totalWritten++;
-      }catch(e){ errors.push('Incidencias: '+e.message); }
-    }
-
-    if(errors.length > 0){
-      setSyncStatus('err','Error parcial al guardar');
-      toast('Errores: '+errors.join(' | '),'err');
-    } else {
-      takeSnapshot(); // actualizar snapshot al éxito total
-      dirty=false;
-      setSyncStatus('ok','Guardado · '+new Date().toLocaleTimeString());
-      toast('Guardado ✓ ('+totalWritten+' celdas)','ok');
-    }
+    const payload={
+      grades,
+      students: Object.fromEntries(grades.map(g=>[g, sts[g].map((s,si)=>({num:s.num,name:s.name,pts:pts[g][si]}))])),
+      att,
+      inc: INC
+    };
+    await gsRequest('setData', payload);
+    dirty=false;
+    setSyncStatus('ok','Guardado · '+new Date().toLocaleTimeString());
+    toast('Cambios sincronizados con éxito ✓','ok');
   }catch(e){
     setSyncStatus('err','Error al guardar');
     toast('Error: '+e.message,'err');
@@ -543,7 +481,6 @@ async function syncToSheets(){
   }
 }
 
-// ─── TABS ────────────────────────────────────────────────
 function showTab(id,el){
   if(!loaded) return;
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
@@ -558,7 +495,6 @@ function showTab(id,el){
   else if(id==='informes') renderInformes();
 }
 
-// ─── GRADE BAR ───────────────────────────────────────────
 function gradeBar(containerId,fn){
   if(!grades.includes(cGrade)) cGrade=grades[0]||'';
   document.getElementById(containerId).innerHTML=grades.map(g=>
@@ -573,21 +509,10 @@ function selG(g,btn,fn){
   fn();
 }
 
-// ─── LISTA ───────────────────────────────────────────────
 function renderLista(){
   gradeBar('grade-bar','selGLista');
   document.getElementById('lista-title').textContent='Lista — '+cGrade;
-  // Poblar selector de fechas con las que existen en el sheet para este grado
-  const dateEl = document.getElementById('listDate');
-  const prev   = dateEl.value;
-  const dates  = (sheetDates[cGrade] || []).slice().sort();
-  dateEl.innerHTML = '<option value="">-- Selecciona fecha --</option>' +
-    dates.map(d => {
-      const sd = SCHOOL_DATES.find(x=>x.ds===d);
-      const label = sd ? d+' ('+sd.abbr+' '+sd.day+')' : d;
-      return '<option value="'+d+'"'+(d===prev?' selected':'')+'>'+label+'</option>';
-    }).join('');
-  const date=dateEl.value;
+  const date=document.getElementById('listDate').value;
   const da=(att[cGrade]&&att[cGrade][date])||{};
   document.getElementById('lista-body').innerHTML=(sts[cGrade]||[]).map(s=>{
     const v=da[s.num]||'';
@@ -632,14 +557,15 @@ function showAddSt(){document.getElementById('newStName').value='';document.getE
 function addStudent(){
   const nm=document.getElementById('newStName').value.trim().toUpperCase();
   if(!nm) return;
-  const mx=sts[cGrade].reduce((a,s)=>Math.max(a,s.num),0)+1;
+  const mx=(sts[cGrade]||[]).reduce((a,s)=>Math.max(a,s.num),0)+1;
+  if(!sts[cGrade]) sts[cGrade] = [];
   sts[cGrade].push({num:mx,name:nm});
+  if(!pts[cGrade]) pts[cGrade] = [];
   pts[cGrade].push(Array(MAX_SESSIONS).fill(null));
   markDirty(); closeModal('addStModal'); renderLista();
   toast(nm+' agregado ✓');
 }
 
-// ─── HISTORIAL ───────────────────────────────────────────
 let histMonthDates=[];
 function renderHist(){
   gradeBar('hist-grade-bar','selGHist');
@@ -671,13 +597,12 @@ function cycleCell(num,ds){
   const CYCLE=['P','A','E','T'];
   const cur=(att[cGrade][ds]||{})[num]||'';
   const idx=CYCLE.indexOf(cur);
-  const next=idx>=0&&idx<3?CYCLE[idx+1]:'';
+  const next=idx>=0&&idx<3?CYCLE[idx+1]:(idx===3?'':'P');
   if(!att[cGrade][ds]) att[cGrade][ds]={};
   if(next) att[cGrade][ds][num]=next; else delete att[cGrade][ds][num];
   markDirty(); renderHistTable();
 }
 
-// ─── PUNTOS ──────────────────────────────────────────────
 function renderPuntos(){
   gradeBar('pts-grade-bar','selGPts');
   document.getElementById('pts-title').textContent='Puntos — '+cGrade;
@@ -718,7 +643,6 @@ function calcPct(arr){
   return v.length?Math.round(v.reduce((a,b)=>a+b,0)/v.length/4*100):0;
 }
 
-// ─── RESUMEN ─────────────────────────────────────────────
 function renderResumen(){
   gradeBar('res-grade-bar','selGRes');
   document.getElementById('res-title').textContent='Resumen — '+cGrade;
@@ -748,7 +672,6 @@ function renderResumen(){
 }
 function selGRes(g,btn){selG(g,btn,renderResumen);}
 
-// ─── INCIDENCIAS ─────────────────────────────────────────
 function renderInc(){
   document.getElementById('inc-list').innerHTML=INC.length===0
     ?`<p style="color:var(--mt);text-align:center;padding:20px">Sin incidencias registradas.</p>`
@@ -802,16 +725,15 @@ function delInc(idx){
   markDirty(); renderInc();
 }
 
-// ─── INFORMES ────────────────────────────────────────────
 function populateInfSelects(){
   ['inf-att-grade','inf-res-grade','inf-pts-grade'].forEach(id=>{
     const sel=document.getElementById(id);
-    sel.innerHTML=grades.map(g=>`<option value="${g}">${g}</option>`).join('');
+    if(sel) sel.innerHTML=grades.map(g=>`<option value="${g}">${g}</option>`).join('');
   });
   const mesEl=document.getElementById('inf-att-mes');
-  mesEl.innerHTML=MONTHS_ORDER.map(m=>`<option value="${m}">${m}</option>`).join('');
+  if(mesEl) mesEl.innerHTML=MONTHS_ORDER.map(m=>`<option value="${m}">${m}</option>`).join('');
   const rm=document.getElementById('resMes');
-  rm.innerHTML=`<option value="">Todo el año</option>`+MONTHS_ORDER.map(m=>`<option value="${m}">${m}</option>`).join('');
+  if(rm) rm.innerHTML=`<option value="">Todo el año</option>`+MONTHS_ORDER.map(m=>`<option value="${m}">${m}</option>`).join('');
 }
 function renderInformes(){}
 
@@ -926,10 +848,10 @@ function printIncReport(){
     `<h1>Registro de Incidencias</h1><h2>${list.length} incidencia(s)${filter?' — '+(filter==='open'?'En seguimiento':'Resueltas'):''}</h2>${blocks||'<p>Sin incidencias.</p>'}`));
 }
 
-// ─── HELPERS ─────────────────────────────────────────────
 function markDirty(){dirty=true;document.getElementById('saveBtn').style.display='flex';}
 function toast(msg,type='ok'){
   const t=document.getElementById('toast');
+  if(!t) return;
   t.textContent=msg; t.className='toast show '+(type||'');
   clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),3200);
 }
@@ -940,25 +862,17 @@ window.addEventListener('beforeunload',e=>{
   if(dirty){e.preventDefault();e.returnValue='Hay cambios sin guardar.';}
 });
 
+document.getElementById('listDate').value=new Date().toISOString().split('T')[0];
 document.getElementById('listDate').addEventListener('change',()=>{if(loaded)renderLista();});
 
-// Auto-connect on load
-(async function(){
-  setSyncStatus('spin','Conectando con Google Sheets...');
-  try{
-    const data = await gsRequest('getData', {});
-    applyData(data);
-    setSyncStatus('ok','Conectado · Google Sheets');
-    toast('Datos cargados ✓','ok');
-  }catch(e){
-    setSyncStatus('err','Error de conexión');
-    const errMsg = e.message||String(e);
-    document.getElementById('wlcMsg').textContent='❌ No se pudo conectar con Google Sheets.';
-    document.getElementById('wlcErr').textContent='Error: '+errMsg;
-    document.getElementById('wlcBox').style.display='block';
-    toast('Error al conectar: '+errMsg,'err');
+// Inicialización automática de conexión
+window.addEventListener('DOMContentLoaded', () => {
+  if (GS_URL) {
+    connectGS();
+  } else {
+    showUrlModal();
   }
-})();
+});
 </script>
 </body>
 </html>
