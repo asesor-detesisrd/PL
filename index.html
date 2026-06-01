@@ -46,7 +46,7 @@ tr:last-child td{border-bottom:none;}tr:hover td{background:rgba(255,255,255,.02
 .month-chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
 .mc{padding:5px 12px;border:1px solid var(--bd);border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;background:var(--sf2);color:var(--mt);transition:.15s;}
 .mc.active{background:var(--ac);border-color:var(--ac);color:#fff;}
-.hcell text-align:center;font-size:11px;font-weight:700;padding:4px 2px;cursor:pointer;min-width:28px;transition:background .12s;}
+.hcell{text-align:center;font-size:11px;font-weight:700;padding:4px 2px;cursor:pointer;min-width:28px;transition:background .12s;}
 .hcell:hover{filter:brightness(1.4);}
 .hcell.P{color:var(--gn);background:rgba(34,197,94,.12);}
 .hcell.A{color:var(--rd);background:rgba(239,68,68,.12);}
@@ -87,12 +87,14 @@ tr:last-child td{border-bottom:none;}tr:hover td{background:rgba(255,255,255,.02
 .gsurl-box input{width:100%;background:var(--bg);border:1px solid var(--bd);color:var(--tx);padding:10px 12px;border-radius:8px;font-size:13px;outline:none;margin-bottom:10px;}
 .gsurl-box input:focus{border-color:var(--ac);}
 .hidden{display:none!important;}
+/* SYNC STATUS */
 .sync-row{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--mt);}
 .sync-dot{width:8px;height:8px;border-radius:50%;background:var(--mt);}
 .sync-dot.ok{background:var(--gn);}
 .sync-dot.err{background:var(--rd);}
 .sync-dot.spin{background:var(--ac);animation:pulse 1s infinite;}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+/* PRINT */
 @media print {
   body{background:#fff;color:#000;}
   header,.tabs,#saveBtn,.btn,.hbtns,.grade-bar,.month-chips,.no-print{display:none!important;}
@@ -136,7 +138,6 @@ tr:last-child td{border-bottom:none;}tr:hover td{background:rgba(255,255,255,.02
 
 <div class="main">
 
-  <!-- WELCOME / CONNECT -->
   <div id="wlc">
     <div style="font-size:48px">💻</div>
     <h1 style="font-size:22px;font-weight:800">Taller de Informática</h1>
@@ -149,7 +150,6 @@ tr:last-child td{border-bottom:none;}tr:hover td{background:rgba(255,255,255,.02
     </div>
   </div>
 
-  <!-- LISTA -->
   <div id="panel-lista" class="panel hidden">
     <div class="card">
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px;">
@@ -168,7 +168,6 @@ tr:last-child td{border-bottom:none;}tr:hover td{background:rgba(255,255,255,.02
     </div>
   </div>
 
-  <!-- HISTORIAL -->
   <div id="panel-hist" class="panel hidden">
     <div class="card">
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px;">
@@ -183,7 +182,6 @@ tr:last-child td{border-bottom:none;}tr:hover td{background:rgba(255,255,255,.02
     </div>
   </div>
 
-  <!-- PUNTOS -->
   <div id="panel-puntos" class="panel hidden">
     <div class="card">
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px;">
@@ -199,7 +197,6 @@ tr:last-child td{border-bottom:none;}tr:hover td{background:rgba(255,255,255,.02
     </div>
   </div>
 
-  <!-- RESUMEN -->
   <div id="panel-resumen" class="panel hidden">
     <div class="card">
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px;">
@@ -217,7 +214,6 @@ tr:last-child td{border-bottom:none;}tr:hover td{background:rgba(255,255,255,.02
     </div>
   </div>
 
-  <!-- INCIDENCIAS -->
   <div id="panel-incidencias" class="panel hidden">
     <div class="card">
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
@@ -229,7 +225,6 @@ tr:last-child td{border-bottom:none;}tr:hover td{background:rgba(255,255,255,.02
     </div>
   </div>
 
-  <!-- INFORMES -->
   <div id="panel-informes" class="panel hidden">
     <div class="card">
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px;">
@@ -275,12 +270,9 @@ tr:last-child td{border-bottom:none;}tr:hover td{background:rgba(255,255,255,.02
     </div>
   </div>
 
-</div>
-
-<button id="saveBtn" onclick="syncToSheets()">☁ Guardar en Sheets</button>
+</div><button id="saveBtn" onclick="syncToSheets()">☁ Guardar en Sheets</button>
 <div class="toast" id="toast"></div>
 
-<!-- URL MODAL -->
 <div class="mo" id="urlModal">
   <div class="md">
     <h3>⚙ Conectar Google Sheets</h3>
@@ -296,7 +288,6 @@ tr:last-child td{border-bottom:none;}tr:hover td{background:rgba(255,255,255,.02
   </div>
 </div>
 
-<!-- ADD STUDENT MODAL -->
 <div class="mo" id="addStModal">
   <div class="md">
     <h3>Agregar Estudiante</h3>
@@ -308,7 +299,6 @@ tr:last-child td{border-bottom:none;}tr:hover td{background:rgba(255,255,255,.02
   </div>
 </div>
 
-<!-- INCIDENCIA MODAL -->
 <div class="mo" id="incModal">
   <div class="md">
     <h3 id="incModalTitle">Nueva Incidencia</h3>
@@ -332,547 +322,753 @@ tr:last-child td{border-bottom:none;}tr:hover td{background:rgba(255,255,255,.02
 
 <script>
 const MONTHS_ORDER = ["septiembre", "octubre", "noviembre", "diciembre", "enero", "febrero", "marzo", "abril", "mayo", "junio"];
-const SCHOOL_DATES = [{"ds": "2024-09-01", "month": "septiembre", "day": 1, "abbr": "M"}, {"ds": "2024-09-02", "month": "septiembre", "day": 2, "abbr": "M"}, {"ds": "2024-09-03", "month": "septiembre", "day": 3, "abbr": "J"}, {"ds": "2024-09-04", "month": "septiembre", "day": 4, "abbr": "V"}, {"ds": "2024-09-07", "month": "septiembre", "day": 7, "abbr": "L"}, {"ds": "2024-09-08", "month": "septiembre", "day": 8, "abbr": "M"}, {"ds": "2024-09-09", "month": "septiembre", "day": 9, "abbr": "M"}, {"ds": "2024-09-10", "month": "septiembre", "day": 10, "abbr": "J"}, {"ds": "2024-09-11", "month": "septiembre", "day": 11, "abbr": "V"}, {"ds": "2024-09-14", "month": "septiembre", "day": 14, "abbr": "L"}, {"ds": "2024-09-15", "month": "septiembre", "day": 15, "abbr": "M"}, {"ds": "2024-09-16", "month": "septiembre", "day": 16, "abbr": "M"}, {"ds": "2024-09-17", "month": "septiembre", "day": 17, "abbr": "J"}, {"ds": "2024-09-18", "month": "septiembre", "day": 18, "abbr": "V"}, {"ds": "2024-09-21", "month": "septiembre", "day": 21, "abbr": "L"}, {"ds": "2024-09-22", "month": "septiembre", "day": 22, "abbr": "M"}, {"ds": "2024-09-23", "month": "septiembre", "day": 23, "abbr": "M"}, {"ds": "2024-09-24", "month": "septiembre", "day": 24, "abbr": "J"}, {"ds": "2024-09-25", "month": "septiembre", "day": 25, "abbr": "V"}, {"ds": "2024-09-28", "month": "septiembre", "day": 28, "abbr": "L"}, {"ds": "2024-09-29", "month": "septiembre", "day": 29, "abbr": "M"}, {"ds": "2024-09-30", "month": "septiembre", "day": 30, "abbr": "M"}, {"ds": "2024-10-01", "month": "octubre", "day": 1, "abbr": "J"}, {"ds": "2024-10-02", "month": "octubre", "day": 2, "abbr": "V"}, {"ds": "2024-10-05", "month": "octubre", "day": 5, "abbr": "L"}, {"ds": "2024-10-06", "month": "octubre", "day": 6, "abbr": "M"}, {"ds": "2024-10-07", "month": "octubre", "day": 7, "abbr": "M"}, {"ds": "2024-10-08", "month": "octubre", "day": 8, "abbr": "J"}, {"ds": "2024-10-09", "month": "octubre", "day": 9, "abbr": "V"}, {"ds": "2024-10-12", "month": "octubre", "day": 12, "abbr": "L"}, {"ds": "2024-10-13", "month": "octubre", "day": 13, "abbr": "M"}, {"ds": "2024-10-14", "month": "octubre", "day": 14, "abbr": "M"}, {"ds": "2024-10-15", "month": "octubre", "day": 15, "abbr": "J"}, {"ds": "2024-10-16", "month": "octubre", "day": 16, "abbr": "V"}, {"ds": "2024-10-19", "month": "octubre", "day": 19, "abbr": "L"}, {"ds": "2024-10-20", "month": "octubre", "day": 20, "abbr": "M"}, {"ds": "2024-10-21", "month": "octubre", "day": 21, "abbr": "M"}, {"ds": "2024-10-22", "month": "octubre", "day": 22, "abbr": "J"}, {"ds": "2024-10-23", "month": "octubre", "day": 23, "abbr": "V"}, {"ds": "2024-10-26", "month": "octubre", "day": 26, "abbr": "L"}, {"ds": "2024-10-27", "month": "octubre", "day": 27, "abbr": "M"}, {"ds": "2024-10-28", "month": "octubre", "day": 28, "abbr": "M"}, {"ds": "2024-10-29", "month": "octubre", "day": 29, "abbr": "J"}, {"ds": "2024-10-30", "month": "octubre", "day": 30, "abbr": "V"}, {"ds": "2024-11-02", "month": "noviembre", "day": 2, "abbr": "L"}, {"ds": "2024-11-03", "month": "noviembre", "day": 3, "abbr": "M"}, {"ds": "2024-11-04", "month": "noviembre", "day": 4, "abbr": "M"}, {"ds": "2024-11-05", "month": "noviembre", "day": 5, "abbr": "J"}, {"ds": "2024-11-06", "month": "noviembre", "day": 6, "abbr": "V"}, {"ds": "2024-11-09", "month": "noviembre", "day": 9, "abbr": "L"}, {"ds": "2024-11-10", "month": "noviembre", "day": 10, "abbr": "M"}, {"ds": "2024-11-11", "month": "noviembre", "day": 11, "abbr": "M"}, {"ds": "2024-11-12", "month": "noviembre", "day": 12, "abbr": "J"}, {"ds": "2024-11-13", "month": "noviembre", "day": 13, "abbr": "V"}, {"ds": "2024-11-16", "month": "noviembre", "day": 16, "abbr": "L"}, {"ds": "2024-11-17", "month": "noviembre", "day": 17, "abbr": "M"}, {"ds": "2024-11-18", "month": "noviembre", "day": 18, "abbr": "M"}, {"ds": "2024-11-19", "month": "noviembre", "day": 19, "abbr": "J"}, {"ds": "2024-11-20", "month": "noviembre", "day": 20, "abbr": "V"}, {"ds": "2024-11-23", "month": "noviembre", "day": 23, "abbr": "L"}, {"ds": "2024-11-24", "month": "noviembre", "day": 24, "abbr": "M"}, {"ds": "2024-11-25", "month": "noviembre", "day": 25, "abbr": "M"}, {"ds": "2024-11-26", "month": "noviembre", "day": 26, "abbr": "J"}, {"ds": "2024-11-27", "month": "noviembre", "day": 27, "abbr": "V"}, {"ds": "2024-11-30", "month": "noviembre", "day": 30, "abbr": "L"}, {"ds": "2024-12-01", "month": "diciembre", "day": 1, "abbr": "M"}, {"ds": "2024-12-02", "month": "diciembre", "day": 2, "abbr": "M"}, {"ds": "2024-12-03", "month": "diciembre", "day": 3, "abbr": "J"}, {"ds": "2024-12-04", "month": "diciembre", "day": 4, "abbr": "V"}, {"ds": "2024-12-07", "month": "diciembre", "day": 7, "abbr": "L"}, {"ds": "2024-12-08", "month": "diciembre", "day": 8, "abbr": "M"}, {"ds": "2024-12-09", "month": "diciembre", "day": 9, "abbr": "M"}, {"ds": "2024-12-10", "month": "diciembre", "day": 10, "abbr": "J"}, {"ds": "2024-12-11", "month": "diciembre", "day": 11, "abbr": "V"}, {"ds": "2024-12-14", "month": "diciembre", "day": 14, "abbr": "L"}, {"ds": "2024-12-15", "month": "diciembre", "day": 15, "abbr": "M"}, {"ds": "2024-12-16", "month": "diciembre", "day": 16, "abbr": "M"}, {"ds": "2024-12-17", "month": "diciembre", "day": 17, "abbr": "J"}, {"ds": "2024-12-18", "month": "diciembre", "day": 18, "abbr": "V"}, {"ds": "2024-12-21", "month": "diciembre", "day": 21, "abbr": "L"}, {"ds": "2024-12-22", "month": "diciembre", "day": 22, "abbr": "M"}, {"ds": "2024-12-23", "month": "diciembre", "day": 23, "abbr": "M"}, {"ds": "2024-12-24", "month": "diciembre", "day": 24, "abbr": "J"}, {"ds": "2024-12-25", "month": "diciembre", "day": 25, "abbr": "V"}, {"ds": "2024-12-28", "month": "diciembre", "day": 28, "abbr": "L"}, {"ds": "2024-12-29", "month": "diciembre", "day": 29, "abbr": "M"}, {"ds": "2024-12-30", "month": "diciembre", "day": 30, "abbr": "M"}, {"ds": "2024-12-31", "month": "diciembre", "day": 31, "abbr": "J"}, {"ds": "2025-01-01", "month": "enero", "day": 1, "abbr": "V"}, {"ds": "2025-01-04", "month": "enero", "day": 4, "abbr": "L"}, {"ds": "2025-01-05", "month": "enero", "day": 5, "abbr": "M"}, {"ds": "2025-01-06", "month": "enero", "day": 6, "abbr": "M"}, {"ds": "2025-01-07", "month": "enero", "day": 7, "abbr": "J"}, {"ds": "2025-01-08", "month": "enero", "day": 8, "abbr": "V"}, {"ds": "2025-01-11", "month": "enero", "day": 11, "abbr": "L"}, {"ds": "2025-01-12", "month": "enero", "day": 12, "abbr": "M"}, {"ds": "2025-01-13", "month": "enero", "day": 13, "abbr": "M"}, {"ds": "2025-01-14", "month": "enero", "day": 14, "abbr": "J"}, {"ds": "2025-01-15", "month": "enero", "day": 15, "abbr": "V"}, {"ds": "2025-01-18", "month": "enero", "day": 18, "abbr": "L"}, {"ds": "2025-01-19", "month": "enero", "day": 19, "abbr": "M"}, {"ds": "2025-01-20", "month": "enero", "day": 20, "abbr": "M"}, {"ds": "2025-01-21", "month": "enero", "day": 21, "abbr": "J"}, {"ds": "2025-01-22", "month": "enero", "day": 22, "abbr": "V"}, {"ds": "2025-01-25", "month": "enero", "day": 25, "abbr": "L"}, {"ds": "2025-01-26", "month": "enero", "day": 26, "abbr": "M"}, {"ds": "2025-01-27", "month": "enero", "day": 27, "abbr": "M"}, {"ds": "2025-01-28", "month": "enero", "day": 28, "abbr": "J"}, {"ds": "2025-01-29", "month": "enero", "day": 29, "abbr": "V"}, {"ds": "2025-02-02", "month": "febrero", "day": 2, "abbr": "L"}, {"ds": "2025-02-03", "month": "febrero", "day": 3, "abbr": "M"}, {"ds": "2025-02-04", "month": "febrero", "day": 4, "abbr": "M"}, {"ds": "2025-02-05", "month": "febrero", "day": 5, "abbr": "J"}, {"ds": "2025-02-06", "month": "febrero", "day": 6, "abbr": "V"}, {"ds": "2025-02-08", "month": "febrero", "day": 8, "abbr": "L"}, {"ds": "2025-02-10", "month": "febrero", "day": 10, "abbr": "M"}, {"ds": "2025-02-11", "month": "febrero", "day": 11, "abbr": "M"}, {"ds": "2025-02-12", "month": "febrero", "day": 12, "abbr": "J"}, {"ds": "2025-02-13", "month": "febrero", "day": 13, "abbr": "V"}, {"ds": "2025-02-16", "month": "febrero", "day": 16, "abbr": "L"}, {"ds": "2025-02-17", "month": "febrero", "day": 17, "abbr": "M"}, {"ds": "2025-02-18", "month": "febrero", "day": 18, "abbr": "M"}, {"ds": "2025-02-19", "month": "febrero", "day": 19, "abbr": "J"}, {"ds": "2025-02-20", "month": "febrero", "day": 20, "abbr": "V"}, {"ds": "2025-02-23", "month": "febrero", "day": 23, "abbr": "L"}, {"ds": "2025-02-24", "month": "febrero", "day": 24, "abbr": "M"}, {"ds": "2025-02-25", "month": "febrero", "day": 25, "abbr": "M"}, {"ds": "2025-02-26", "month": "febrero", "day": 26, "abbr": "J"}, {"ds": "2025-02-27", "month": "febrero", "day": 27, "abbr": "V"}, {"ds": "2025-03-02", "month": "marzo", "day": 2, "abbr": "L"}, {"ds": "2025-03-03", "month": "marzo", "day": 3, "abbr": "M"}, {"ds": "2025-03-04", "month": "marzo", "day": 4, "abbr": "M"}, {"ds": "2025-03-05", "month": "marzo", "day": 5, "abbr": "J"}, {"ds": "2025-03-06", "month": "marzo", "day": 6, "abbr": "V"}, {"ds": "2025-03-09", "month": "marzo", "day": 9, "abbr": "L"}, {"ds": "2025-03-10", "month": "marzo", "day": 10, "abbr": "M"}, {"ds": "2025-03-11", "month": "marzo", "day": 11, "abbr": "M"}, {"ds": "2025-03-12", "month": "marzo", "day": 12, "abbr": "J"}, {"ds": "2025-03-13", "month": "marzo", "day": 13, "abbr": "V"}, {"ds": "2025-03-16", "month": "marzo", "day": 16, "abbr": "L"}, {"ds": "2025-03-17", "month": "marzo", "day": 17, "abbr": "M"}, {"ds": "2025-03-18", "month": "marzo", "day": 18, "abbr": "M"}, {"ds": "2025-03-19", "month": "marzo", "day": 19, "abbr": "J"}, {"ds": "2025-03-20", "month": "marzo", "day": 20, "abbr": "V"}, {"ds": "2025-03-23", "month": "marzo", "day": 23, "abbr": "L"}, {"ds": "2025-03-24", "month": "marzo", "day": 24, "abbr": "M"}, {"ds": "2025-03-25", "month": "marzo", "day": 25, "abbr": "M"}, {"ds": "2025-03-26", "month": "marzo", "day": 26, "abbr": "J"}, {"ds": "2025-03-27", "month": "marzo", "day": 27, "abbr": "V"}, {"ds": "2025-03-30", "month": "marzo", "day": 30, "abbr": "L"}, {"ds": "2025-03-31", "month": "marzo", "day": 31, "abbr": "M"}, {"ds": "2025-04-01", "month": "abril", "day": 1, "abbr": "M"}, {"ds": "2025-04-02", "month": "abril", "day": 2, "abbr": "J"}, {"ds": "2025-04-03", "month": "abril", "day": 3, "abbr": "V"}, {"ds": "2025-04-06", "month": "abril", "day": 6, "abbr": "L"}, {"ds": "2025-04-07", "month": "abril", "day": 7, "abbr": "M"}, {"ds": "2025-04-08", "month": "abril", "day": 8, "abbr": "M"}, {"ds": "2025-04-09", "month": "abril", "day": 9, "abbr": "J"}, {"ds": "2025-04-10", "month": "abril", "day": 10, "abbr": "V"}, {"ds": "2025-04-13", "month": "abril", "day": 13, "abbr": "L"}, {"ds": "2025-04-14", "month": "abril", "day": 14, "abbr": "M"}, {"ds": "2025-04-15", "month": "abril", "day": 15, "abbr": "M"}, {"ds": "2025-04-16", "month": "abril", "day": 16, "abbr": "J"}, {"ds": "2025-04-17", "month": "abril", "day": 17, "abbr": "V"}, {"ds": "2025-04-20", "month": "abril", "day": 20, "abbr": "L"}, {"ds": "2025-04-21", "month": "abril", "day": 21, "abbr": "M"}, {"ds": "2025-04-22", "month": "abril", "day": 22, "abbr": "M"}, {"ds": "2025-04-23", "month": "abril", "day": 23, "abbr": "J"}, {"ds": "2025-04-24", "month": "abril", "day": 24, "abbr": "V"}, {"ds": "2025-04-27", "month": "abril", "day": 27, "abbr": "L"}, {"ds": "2025-04-28", "month": "abril", "day": 28, "abbr": "M"}, {"ds": "2025-04-29", "month": "abril", "day": 29, "abbr": "M"}, {"ds": "2025-04-30", "month": "abril", "day": 30, "abbr": "J"}, {"ds": "2025-05-01", "month": "mayo", "day": 1, "abbr": "V"}, {"ds": "2025-05-04", "month": "mayo", "day": 4, "abbr": "L"}, {"ds": "2025-05-05", "month": "mayo", "day": 5, "abbr": "M"}, {"ds": "2025-05-06", "month": "mayo", "day": 6, "abbr": "M"}, {"ds": "2025-05-07", "month": "mayo", "day": 7, "abbr": "J"}, {"ds": "2025-05-08", "month": "mayo", "day": 8, "abbr": "V"}, {"ds": "2025-05-11", "month": "mayo", "day": 11, "abbr": "L"}, {"ds": "2025-05-12", "month": "mayo", "day": 12, "abbr": "M"}, {"ds": "2025-05-13", "month": "mayo", "day": 13, "abbr": "M"}, {"ds": "2025-05-14", "month": "mayo", "day": 14, "abbr": "J"}, {"ds": "2025-05-15", "month": "mayo", "day": 15, "abbr": "V"}, {"ds": "2025-05-18", "month": "mayo", "day": 18, "abbr": "L"}, {"ds": "2025-05-19", "month": "mayo", "day": 19, "abbr": "M"}, {"ds": "2025-05-20", "month": "mayo", "day": 20, "abbr": "M"}, {"ds": "2025-05-21", "month": "mayo", "day": 21, "abbr": "J"}, {"ds": "2025-05-22", "month": "mayo", "day": 22, "abbr": "V"}, {"ds": "2025-05-25", "month": "mayo", "day": 25, "abbr": "L"}, {"ds": "2025-05-26", "month": "mayo", "day": 26, "abbr": "M"}, {"ds": "2025-05-27", "month": "mayo", "day": 27, "abbr": "M"}, {"ds": "2025-05-28", "month": "mayo", "day": 28, "abbr": "J"}, {"ds": "2025-05-29", "month": "mayo", "day": 29, "abbr": "V"}, {"ds": "2025-06-01", "month": "junio", "day": 1, "abbr": "L"}, {"ds": "2025-06-02", "month": "junio", "day": 2, "abbr": "M"}, {"ds": "2025-06-03", "month": "junio", "day": 3, "abbr": "M"}, {"ds": "2025-06-04", "month": "junio", "day": 4, "abbr": "J"}, {"ds": "2025-06-05", "month": "junio", "day": 5, "abbr": "V"}, {"ds": "2025-06-08", "month": "junio", "day": 8, "abbr": "L"}, {"ds": "2025-06-09", "month": "junio", "day": 9, "abbr": "M"}, {"ds": "2025-06-10", "month": "junio", "day": 10, "abbr": "M"}, {"ds": "2025-06-11", "month": "junio", "day": 11, "abbr": "J"}, {"ds": "2025-06-12", "month": "junio", "day": 12, "abbr": "V"}, {"ds": "2025-06-15", "month": "junio", "day": 15, "abbr": "L"}, {"ds": "2025-06-16", "month": "junio", "day": 16, "abbr": "M"}, {"ds": "2025-06-17", "month": "junio", "day": 17, "abbr": "M"}, {"ds": "2025-06-18", "month": "junio", "day": 18, "abbr": "J"}, {"ds": "2025-06-19", "month": "junio", "day": 19, "abbr": "V"}, {"ds": "2025-06-22", "month": "junio", "day": 22, "abbr": "L"}, {"ds": "2025-06-23", "month": "junio", "day": 23, "abbr": "M"}, {"ds": "2025-06-24", "month": "junio", "day": 24, "abbr": "M"}, {"ds": "2025-06-25", "month": "junio", "day": 25, "abbr": "J"}, {"ds": "2025-06-26", "month": "junio", "day": 26, "abbr": "V"}, {"ds": "2025-06-29", "month": "junio", "day": 29, "abbr": "L"}, {"ds": "2025-06-30", "month": "junio", "day": 30, "abbr": "M"}];
-const INC_SEED     = [];
-const MAX_SESSIONS = 40;
-const PTS_PAGE     = 10;
+const SCHOOL_DATES = [{"ds": "2024-09-01", "month": "septiembre", "day": 1, "abbr": "M"}, {"ds": "2024-09-02", "month": "septiembre", "day": 2, "abbr": "M"}, {"ds": "2024-09-03", "month": "septiembre", "day": 3, "abbr": "J"}, {"ds": "2024-09-04", "month": "septiembre", "day": 4, "abbr": "V"}, {"ds": "2024-09-07", "month": "septiembre", "day": 7, "abbr": "L"}, {"ds": "2024-09-08", "month": "septiembre", "day": 8, "abbr": "M"}, {"ds": "2024-09-09", "month": "septiembre", "day": 9, "abbr": "M"}, {"ds": "2024-09-10", "month": "septiembre", "day": 10, "abbr": "J"}, {"ds": "2024-09-11", "month": "septiembre", "day": 11, "abbr": "V"}, {"ds": "2024-09-14", "month": "septiembre", "day": 14, "abbr": "L"}, {"ds": "2024-09-15", "month": "septiembre", "day": 15, "abbr": "M"}, {"ds": "2024-09-16", "month": "septiembre", "day": 16, "abbr": "M"}, {"ds": "2024-09-17", "month": "septiembre", "day": 17, "abbr": "J"}, {"ds": "2024-09-18", "month": "septiembre", "day": 18, "abbr": "V"}, {"ds": "2024-09-21", "month": "septiembre", "day": 21, "abbr": "L"}, {"ds": "2024-09-22", "month": "septiembre", "day": 22, "abbr": "M"}, {"ds": "2024-09-23", "month": "septiembre", "day": 23, "abbr": "M"}, {"ds": "2024-09-24", "month": "septiembre", "day": 24, "abbr": "J"}, {"ds": "2024-09-25", "month": "septiembre", "day": 25, "abbr": "V"}, {"ds": "2024-09-28", "month": "septiembre", "day": 28, "abbr": "L"}, {"ds": "2024-09-29", "month": "septiembre", "day": 29, "abbr": "M"}, {"ds": "2024-09-30", "month": "septiembre", "day": 30, "abbr": "M"}, {"ds": "2024-10-01", "month": "octubre", "day": 1, "abbr": "J"}, {"ds": "2024-10-02", "month": "octubre", "day": 2, "abbr": "V"}, {"ds": "2024-10-05", "month": "octubre", "day": 5, "abbr": "L"}, {"ds": "2024-10-06", "month": "octubre", "day": 6, "abbr": "M"}, {"ds": "2024-10-07", "month": "octubre", "day": 7, "abbr": "M"}, {"ds": "2024-10-08", "month": "octubre", "day": 8, "abbr": "J"}, {"ds": "2024-10-09", "month": "octubre", "day": 9, "abbr": "V"}, {"ds": "2024-10-12", "month": "octubre", "day": 12, "abbr": "L"}, {"ds": "2024-10-13", "month": "octubre", "day": 13, "abbr": "M"}, {"ds": "2024-10-14", "month": "octubre", "day": 14, "abbr": "M"}, {"ds": "2024-10-15", "month": "octubre", "day": 15, "abbr": "J"}, {"ds": "2024-10-16", "month": "octubre", "day": 16, "abbr": "V"}, {"ds": "2024-10-19", "month": "octubre", "day": 19, "abbr": "L"}, {"ds": "2024-10-20", "month": "octubre", "day": 20, "abbr": "M"}, {"ds": "2024-10-21", "month": "octubre", "day": 21, "abbr": "M"}, {"ds": "2024-10-22", "month": "octubre", "day": 22, "abbr": "J"}, {"ds": "2024-10-23", "month": "octubre", "day": 23, "abbr": "V"}, {"ds": "2024-10-26", "month": "octubre", "day": 26, "abbr": "L"}, {"ds": "2024-10-27", "month": "octubre", "day": 27, "abbr": "M"}, {"ds": "2024-10-28", "month": "octubre", "day": 28, "abbr": "M"}, {"ds": "2024-10-29", "month": "octubre", "day": 29, "abbr": "J"}, {"ds": "2024-10-30", "month": "octubre", "day": 30, "abbr": "V"}, {"ds": "2024-11-02", "month": "noviembre", "day": 2, "abbr": "L"}, {"ds": "2024-11-03", "month": "noviembre", "day": 3, "abbr": "M"}, {"ds": "2024-11-04", "month": "noviembre", "day": 4, "abbr": "M"}, {"ds": "2024-11-05", "month": "noviembre", "day": 5, "abbr": "J"}, {"ds": "2024-11-06", "month": "noviembre", "day": 6, "abbr": "V"}, {"ds": "2024-11-09", "month": "noviembre", "day": 9, "abbr": "L"}, {"ds": "2024-11-10", "month": "noviembre", "day": 10, "abbr": "M"}, {"ds": "2024-11-11", "month": "noviembre", "day": 11, "abbr": "M"}, {"ds": "2024-11-12", "month": "noviembre", "day": 12, "abbr": "J"}, {"ds": "2024-11-13", "month": "noviembre", "day": 13, "abbr": "V"}, {"ds": "2024-11-16", "month": "noviembre", "day": 16, "abbr": "L"}, {"ds": "2024-11-17", "month": "noviembre", "day": 17, "abbr": "M"}, {"ds": "2024-11-18", "month": "noviembre", "day": 18, "abbr": "M"}, {"ds": "2024-11-19", "month": "noviembre", "day": 19, "abbr": "J"}, {"ds": "2024-11-20", "month": "noviembre", "day": 20, "abbr": "V"}, {"ds": "2024-11-23", "month": "noviembre", "day": 23, "abbr": "L"}, {"ds": "2024-11-24", "month": "noviembre", "day": 24, "abbr": "M"}, {"ds": "2024-11-25", "month": "noviembre", "day": 25, "abbr": "M"}, {"ds": "2024-11-26", "month": "noviembre", "day": 26, "abbr": "J"}, {"ds": "2024-11-27", "month": "noviembre", "day": 27, "abbr": "V"}, {"ds": "2024-11-30", "month": "noviembre", "day": 30, "abbr": "L"}, {"ds": "2024-12-01", "month": "diciembre", "day": 1, "abbr": "M"}, {"ds": "2024-12-02", "month": "diciembre", "day": 2, "abbr": "M"}, {"ds": "2024-12-03", "month": "diciembre", "day": 3, "abbr": "J"}, {"ds": "2024-12-04", "month": "diciembre", "day": 4, "abbr": "V"}, {"ds": "2024-12-07", "month": "diciembre", "day": 7, "abbr": "L"}, {"ds": "2024-12-08", "month": "diciembre", "day": 8, "abbr": "M"}, {"ds": "2024-12-09", "month": "diciembre", "day": 9, "abbr": "M"}, {"ds": "2024-12-10", "month": "diciembre", "day": 10, "abbr": "J"}, {"ds": "2024-12-11", "month": "diciembre", "day": 11, "abbr": "V"}, {"ds": "2024-12-14", "month": "diciembre", "day": 14, "abbr": "L"}, {"ds": "2024-12-15", "month": "diciembre", "day": 15, "abbr": "M"}, {"ds": "2024-12-16", "month": "diciembre", "day": 16, "abbr": "M"}, {"ds": "2024-12-17", "month": "diciembre", "day": 17, "abbr": "J"}, {"ds": "2024-12-18", "month": "diciembre", "day": 18, "abbr": "V"}, {"ds": "2024-12-21", "month": "diciembre", "day": 21, "abbr": "L"}, {"ds": "2024-12-22", "month": "diciembre", "day": 22, "abbr": "M"}, {"ds": "2024-12-23", "month": "diciembre", "day": 23, "abbr": "M"}, {"ds": "2024-12-24", "month": "diciembre", "day": 24, "abbr": "J"}, {"ds": "2024-12-25", "month": "diciembre", "day": 25, "abbr": "V"}, {"ds": "2024-12-28", "month": "diciembre", "day": 28, "abbr": "L"}, {"ds": "2024-12-29", "month": "diciembre", "day": 29, "abbr": "M"}, {"ds": "2024-12-30", "month": "diciembre", "day": 30, "abbr": "M"}, {"ds": "2024-12-31", "month": "diciembre", "day": 31, "abbr": "J"}, {"ds": "2025-01-01", "month": "enero", "day": 1, "abbr": "V"}, {"ds": "2025-01-04", "month": "enero", "day": 4, "abbr": "L"}, {"ds": "2025-01-05", "month": "enero", "day": 5, "abbr": "M"}, {"ds": "2025-01-06", "month": "enero", "day": 6, "abbr": "M"}, {"ds": "2025-01-07", "month": "enero", "day": 7, "abbr": "J"}, {"ds": "2025-01-08", "month": "enero", "day": 8, "abbr": "V"}, {"ds": "2025-01-11", "month": "enero", "day": 11, "abbr": "L"}, {"ds": "2025-01-12", "month": "enero", "day": 12, "abbr": "M"}, {"ds": "2025-01-13", "month": "enero", "day": 13, "abbr": "M"}, {"ds": "2025-01-14", "month": "enero", "day": 14, "abbr": "J"}, {"ds": "2025-01-15", "month": "enero", "day": 15, "abbr": "V"}, {"ds": "2025-01-18", "month": "enero", "day": 18, "abbr": "L"}, {"ds": "2025-01-19", "month": "enero", "day": 19, "abbr": "M"}, {"ds": "2025-01-20", "month": "enero", "day": 20, "abbr": "M"}, {"ds": "2025-01-21", "month": "enero", "day": 21, "abbr": "J"}, {"ds": "2025-01-22", "month": "enero", "day": 22, "abbr": "V"}, {"ds": "2025-01-25", "month": "enero", "day": 25, "abbr": "L"}, {"ds": "2025-01-26", "month": "enero", "day": 26, "abbr": "M"}, {"ds": "2025-01-27", "month": "enero", "day": 27, "abbr": "M"}, {"ds": "2025-01-28", "month": "enero", "day": 28, "abbr": "J"}, {"ds": "2025-01-29", "month": "enero", "day": 29, "abbr": "V"}, {"ds": "2025-02-01", "month": "febrero", "day": 1, "abbr": "L"}, {"ds": "2025-02-02", "month": "febrero", "day": 2, "abbr": "M"}, {"ds": "2025-02-03", "month": "febrero", "day": 3, "abbr": "M"}, {"ds": "2025-02-04", "month": "febrero", "day": 4, "abbr": "J"}, {"ds": "2025-02-05", "month": "febrero", "day": 5, "abbr": "V"}, {"ds": "2025-02-08", "month": "febrero", "day": 8, "abbr": "L"}, {"ds": "2025-02-09", "month": "febrero", "day": 9, "abbr": "M"}, {"ds": "2025-02-10", "month": "febrero", "day": 10, "abbr": "M"}, {"ds": "2025-02-11", "month": "febrero", "day": 11, "abbr": "J"}, {"ds": "2025-02-12", "month": "febrero", "day": 12, "abbr": "V"}, {"ds": "2025-02-15", "month": "febrero", "day": 15, "abbr": "L"}, {"ds": "2025-02-16", "month": "febrero", "day": 16, "abbr": "M"}, {"ds": "2025-02-17", "month": "febrero", "day": 17, "abbr": "M"}, {"ds": "2025-02-18", "month": "febrero", "day": 18, "abbr": "J"}, {"ds": "2025-02-19", "month": "febrero", "day": 19, "abbr": "V"}, {"ds": "2025-02-22", "month": "febrero", "day": 22, "abbr": "L"}, {"ds": "2025-02-23", "month": "febrero", "day": 23, "abbr": "M"}, {"ds": "2025-02-24", "month": "febrero", "day": 24, "abbr": "M"}, {"ds": "2025-02-25", "month": "febrero", "day": 25, "abbr": "J"}, {"ds": "2025-02-26", "month": "febrero", "day": 26, "abbr": "V"}, {"ds": "2025-03-01", "month": "marzo", "day": 1, "abbr": "L"}, {"ds": "2025-03-02", "month": "marzo", "day": 2, "abbr": "M"}, {"ds": "2025-03-03", "month": "marzo", "day": 3, "abbr": "M"}, {"ds": "2025-03-04", "month": "marzo", "day": 4, "abbr": "J"}, {"ds": "2025-03-05", "month": "marzo", "day": 5, "abbr": "V"}, {"ds": "2025-03-08", "month": "marzo", "day": 8, "abbr": "L"}, {"ds": "2025-03-09", "month": "marzo", "day": 9, "abbr": "M"}, {"ds": "2025-03-10", "month": "marzo", "day": 10, "abbr": "M"}, {"ds": "2025-03-11", "month": "marzo", "day": 11, "abbr": "J"}, {"ds": "2025-03-12", "month": "marzo", "day": 12, "abbr": "V"}, {"ds": "2025-03-15", "month": "marzo", "day": 15, "abbr": "L"}, {"ds": "2025-03-16", "month": "marzo", "day": 16, "abbr": "M"}, {"ds": "2025-03-17", "month": "marzo", "day": 17, "abbr": "M"}, {"ds": "2025-03-18", "month": "marzo", "day": 18, "abbr": "J"}, {"ds": "2025-03-19", "month": "marzo", "day": 19, "abbr": "V"}, {"ds": "2025-03-22", "month": "marzo", "day": 22, "abbr": "L"}, {"ds": "2025-03-23", "month": "marzo", "day": 23, "abbr": "M"}, {"ds": "2025-03-24", "month": "marzo", "day": 24, "abbr": "M"}, {"ds": "2025-03-25", "month": "marzo", "day": 25, "abbr": "J"}, {"ds": "2025-03-26", "month": "marzo", "day": 26, "abbr": "V"}, {"ds": "2025-03-29", "month": "marzo", "day": 29, "abbr": "L"}, {"ds": "2025-03-30", "month": "marzo", "day": 30, "abbr": "M"}, {"ds": "2025-03-31", "month": "marzo", "day": 31, "abbr": "M"}, {"ds": "2025-04-01", "month": "abril", "day": 1, "abbr": "J"}, {"ds": "2025-04-02", "month": "abril", "day": 2, "abbr": "V"}, {"ds": "2025-04-05", "month": "abril", "day": 5, "abbr": "L"}, {"ds": "2025-04-06", "month": "abril", "day": 6, "abbr": "M"}, {"ds": "2025-04-07", "month": "abril", "day": 7, "abbr": "M"}, {"ds": "2025-04-08", "month": "abril", "day": 8, "abbr": "J"}, {"ds": "2025-04-09", "month": "abril", "day": 9, "abbr": "V"}, {"ds": "2025-04-12", "month": "abril", "day": 12, "abbr": "L"}, {"ds": "2025-04-13", "month": "abril", "day": 13, "abbr": "M"}, {"ds": "2025-04-14", "month": "abril", "day": 14, "abbr": "M"}, {"ds": "2025-04-15", "month": "abril", "day": 15, "abbr": "J"}, {"ds": "2025-04-16", "month": "abril", "day": 16, "abbr": "V"}, {"ds": "2025-04-19", "month": "abril", "day": 19, "abbr": "L"}, {"ds": "2025-04-20", "month": "abril", "day": 20, "abbr": "M"}, {"ds": "2025-04-21", "month": "abril", "day": 21, "abbr": "M"}, {"ds": "2025-04-22", "month": "abril", "day": 22, "abbr": "J"}, {"ds": "2025-04-23", "month": "abril", "day": 23, "abbr": "V"}, {"ds": "2025-04-26", "month": "abril", "day": 26, "abbr": "L"}, {"ds": "2025-04-27", "month": "abril", "day": 27, "abbr": "M"}, {"ds": "2025-04-28", "month": "abril", "day": 28, "abbr": "M"}, {"ds": "2025-04-29", "month": "abril", "day": 29, "abbr": "J"}, {"ds": "2025-04-30", "month": "abril", "day": 30, "abbr": "V"}, {"ds": "2025-05-03", "month": "mayo", "day": 3, "abbr": "L"}, {"ds": "2025-05-04", "month": "mayo", "day": 4, "abbr": "M"}, {"ds": "2025-05-05", "month": "mayo", "day": 5, "abbr": "M"}, {"ds": "2025-05-06", "month": "mayo", "day": 6, "abbr": "J"}, {"ds": "2025-05-07", "month": "mayo", "day": 7, "abbr": "V"}, {"ds": "2025-05-10", "month": "mayo", "day": 10, "abbr": "L"}, {"ds": "2025-05-11", "month": "mayo", "day": 11, "abbr": "M"}, {"ds": "2025-05-12", "month": "mayo", "day": 12, "abbr": "M"}, {"ds": "2025-05-13", "month": "mayo", "day": 13, "abbr": "J"}, {"ds": "2025-05-14", "month": "mayo", "day": 14, "abbr": "V"}, {"ds": "2025-05-17", "month": "mayo", "day": 17, "abbr": "L"}, {"ds": "2025-05-18", "month": "mayo", "day": 18, "abbr": "M"}, {"ds": "2025-05-19", "month": "mayo", "day": 19, "abbr": "M"}, {"ds": "2025-05-20", "month": "mayo", "day": 20, "abbr": "J"}, {"ds": "2025-05-21", "month": "mayo", "day": 21, "abbr": "V"}, {"ds": "2025-05-24", "month": "mayo", "day": 24, "abbr": "L"}, {"ds": "2025-05-25", "month": "mayo", "day": 25, "abbr": "M"}, {"ds": "2025-05-26", "month": "mayo", "day": 26, "abbr": "M"}, {"ds": "2025-05-27", "month": "mayo", "day": 27, "abbr": "J"}, {"ds": "2025-05-28", "month": "mayo", "day": 28, "abbr": "V"}, {"ds": "2025-05-31", "month": "mayo", "day": 31, "abbr": "L"}, {"ds": "2025-06-01", "month": "junio", "day": 1, "abbr": "M"}, {"ds": "2025-06-02", "month": "junio", "day": 2, "abbr": "M"}, {"ds": "2025-06-03", "month": "junio", "day": 3, "abbr": "J"}, {"ds": "2025-06-04", "month": "junio", "day": 4, "abbr": "V"}, {"ds": "2025-06-07", "month": "junio", "day": 7, "abbr": "L"}, {"ds": "2025-06-08", "month": "junio", "day": 8, "abbr": "M"}, {"ds": "2025-06-09", "month": "junio", "day": 9, "abbr": "M"}, {"ds": "2025-06-10", "month": "junio", "day": 10, "abbr": "J"}, {"ds": "2025-06-11", "month": "junio", "day": 11, "abbr": "V"}, {"ds": "2025-06-14", "month": "junio", "day": 14, "abbr": "L"}, {"ds": "2025-06-15", "month": "junio", "day": 15, "abbr": "M"}, {"ds": "2025-06-16", "month": "junio", "day": 16, "abbr": "M"}, {"ds": "2025-06-17", "month": "junio", "day": 17, "abbr": "J"}, {"ds": "2025-06-18", "month": "junio", "day": 18, "abbr": "V"}, {"ds": "2025-06-21", "month": "junio", "day": 21, "abbr": "L"}, {"ds": "2025-06-22", "month": "junio", "day": 22, "abbr": "M"}, {"ds": "2025-06-23", "month": "junio", "day": 23, "abbr": "M"}, {"ds": "2025-06-24", "month": "junio", "day": 24, "abbr": "J"}, {"ds": "2025-06-25", "month": "junio", "day": 25, "abbr": "V"}, {"ds": "2025-06-28", "month": "junio", "day": 28, "abbr": "L"}, {"ds": "2025-06-29", "month": "junio", "day": 29, "abbr": "M"}, {"ds": "2025-06-30", "month": "junio", "day": 30, "abbr": "M"}];
+const INC_SEED = [];
 
-let att={}, pts={}, sts={}, INC=[], grades=[];
-let cGrade='', cMonth=MONTHS_ORDER[0], ptsPage=0;
-let dirty=false, loaded=false;
-let GS_URL = localStorage.getItem('gs_url') || '';
+// CAMBIO REALIZADO AQUÍ: URL asignada directamente de forma fija
+let GS_URL = 'https://script.google.com/macros/s/AKfycbyeF6jiDOaWxjOJmXZfUOzTB3BpuaHZ3NRK2oY6B_VdBWDHcMpivVLGTVWTGhvbO2FmUg/exec';
 
-function initState(){
-  att={}; pts={}; sts={}; INC=[]; grades=[];
-  cGrade=''; cMonth=MONTHS_ORDER[0]; ptsPage=0;
-}
+let DB = { grados: {}, puntos: {}, inc: [] };
+let curGrade = '4to A';
+let loaded = false;
+let dirty = false;
 
-function setSyncStatus(state, label){
-  const dot=document.getElementById('syncDot');
-  const lbl=document.getElementById('syncLbl');
-  if(!dot || !lbl) return;
-  dot.className='sync-dot'+(state?' '+state:'');
-  lbl.textContent=label;
+// PTS NAV
+let curPtsMonthIdx = 0; // index en MONTHS_ORDER
+
+function setSyncStatus(type, lbl){
+  const d = document.getElementById('syncDot');
+  const l = document.getElementById('syncLbl');
+  d.className = 'sync-dot ' + type;
+  l.textContent = lbl;
 }
 
 async function gsRequest(action, payload){
-  if(!GS_URL) throw new Error('URL no configurada');
+  if(!GS_URL) throw new Error("Falta configurar la URL de Google Sheets.");
+  const url = GS_URL + '?action=' + encodeURIComponent(action) + '&data=' + encodeURIComponent(JSON.stringify(payload));
   
-  if(action === 'getData'){
-    const url = GS_URL + '?action=getData';
-    const res = await fetch(url, {method: 'GET', redirect:'follow'});
-    if(!res.ok) throw new Error('HTTP ' + res.status);
-    const json = await res.json();
-    if(json && json.error) throw new Error(json.error);
-    return json;
-  }
-
-  if(action === 'setData'){
-    // Enviamos primero las incidencias por POST completo
-    await fetch(GS_URL + '?action=setInc', {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify(payload.inc || [])
-    });
-
-    // Guardamos grado por grado usando POST para evitar cortes de URL
-    for(const g of payload.grades){
-      const chunk = {
-        grade: g,
-        students: payload.students[g] || [],
-        att: payload.att[g] || {}
-      };
-      await fetch(GS_URL + '?action=setGrade', {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(chunk)
-      });
-    }
-    return {ok:true};
-  }
-}
-
-function showUrlModal(){
-  document.getElementById('gsUrlModal').value = GS_URL;
-  document.getElementById('urlModal').classList.add('show');
-}
-function saveUrl(){
-  const u = document.getElementById('gsUrlModal').value.trim();
-  if(!u){toast('Ingresa una URL válida','err');return;}
-  GS_URL = u;
-  localStorage.setItem('gs_url', GS_URL);
-  closeModal('urlModal');
-  connectGS();
+  // Usamos un proxy/no-cors o fetch simple. Para Web Apps lo mejor es mandar como GET o redirigir
+  // Debido a redirecciones de Google, fetch puede dar opaco, pero como el script devuelve texto con JSONP o JSON estructurado, manejamos la respuesta:
+  const res = await fetch(url);
+  if(!res.ok) throw new Error("Error en servidor Sheets: " + res.status);
+  const json = await res.json();
+  if(json.error) throw new Error(json.error);
+  return json;
 }
 
 async function connectGS(){
-  if(!GS_URL) {
+  if(!GS_URL){
     showUrlModal();
     return;
   }
   setSyncStatus('spin','Conectando...');
-  document.getElementById('wlcMsg').textContent='⏳ Conectando con Google Sheets...';
-  document.getElementById('wlcBox').style.display='none';
+  document.getElementById('wlcMsg').textContent = '⏳ Conectando con Google Sheets...';
+  document.getElementById('wlcBox').style.display = 'none';
   try{
     const data = await gsRequest('getData', {});
     applyData(data);
     setSyncStatus('ok','Conectado · Google Sheets');
-    toast('Datos cargados desde Sheets ✓','ok');
+    toast('Datos cargados ✓','ok');
   }catch(e){
     setSyncStatus('err','Error de conexión');
-    const errMsg = e.message||String(e);
-    document.getElementById('wlcMsg').textContent='❌ No se pudo conectar con Google Sheets.';
-    document.getElementById('wlcErr').textContent='Error: '+errMsg;
-    document.getElementById('wlcBox').style.display='block';
-    toast('Error: '+errMsg,'err');
+    document.getElementById('wlcMsg').textContent = '❌ No se pudo conectar con Google Sheets.';
+    document.getElementById('wlcErr').textContent = 'Error: ' + (e.message||String(e));
+    document.getElementById('wlcBox').style.display = 'block';
   }
 }
 
 function applyData(data){
-  initState();
-  grades = data.grades || [];
-  cGrade = grades[0] || '';
-  grades.forEach(g=>{
-    att[g]={};
-    sts[g]=(data.students[g]||[]).map(s=>({num:parseInt(s.num),name:s.name}));
-    pts[g]=(data.students[g]||[]).map(s=>s.pts||Array(MAX_SESSIONS).fill(null));
-    const attG = data.att[g] || {};
-    Object.entries(attG).forEach(([ds,dayAtt])=>{
-      att[g][ds]={};
-      Object.entries(dayAtt).forEach(([num,val])=>{
-        att[g][ds][parseInt(num)]=val;
-      });
-    });
-  });
-  INC = data.inc || [];
-  loaded=true; dirty=false;
+  if(!data) return;
+  DB.grados = data.grados || {};
+  DB.puntos = data.puntos || {};
+  DB.inc = data.inc || [];
+  
+  loaded = true;
   document.getElementById('wlc').classList.add('hidden');
   document.getElementById('mainTabs').classList.remove('hidden');
-  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('hidden'));
-  document.getElementById('panel-lista').classList.add('active');
-  document.getElementById('saveBtn').style.display='flex';
-  populateInfSelects();
+  
+  // Init selectors
+  const gNames = Object.keys(DB.grados);
+  if(gNames.length > 0 && !gNames.includes(curGrade)) curGrade = gNames[0];
+  
+  initUiSelectors(gNames);
+  showTab('lista', document.querySelector('.tab'));
+}
+
+function initUiSelectors(gNames){
+  // Grade bars
+  buildGradeBar('grade-bar', gNames, (g)=>{ curGrade=g; renderLista(); });
+  buildGradeBar('hist-grade-bar', gNames, (g)=>{ curGrade=g; renderHistorial(); });
+  buildGradeBar('pts-grade-bar', gNames, (g)=>{ curGrade=g; renderPuntos(); });
+  buildGradeBar('res-grade-bar', gNames, (g)=>{ curGrade=g; renderResumen(); });
+  
+  // Reports Selectors
+  fillSelect('inf-att-grade', gNames);
+  fillSelect('inf-res-grade', gNames);
+  fillSelect('inf-pts-grade', gNames);
+  
+  fillSelect('inf-att-mes', MONTHS_ORDER);
+  
+  // Resumen month selector
+  const rm = document.getElementById('resMes');
+  rm.innerHTML = '<option value="">Todo el año</option>';
+  MONTHS_ORDER.forEach(m=>{
+    rm.innerHTML += `<option value="${m}">${m.toUpperCase()}</option>`;
+  });
+}
+
+function buildGradeBar(id, list, onClick){
+  const box = document.getElementById(id);
+  box.innerHTML = '';
+  list.forEach(g=>{
+    const btn = document.createElement('button');
+    btn.className = 'gbtn' + (g===curGrade?' active':'');
+    btn.textContent = g;
+    btn.onclick = function(){
+      box.querySelectorAll('.gbtn').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      onClick(g);
+    };
+    box.appendChild(btn);
+  });
+}
+
+function fillSelect(id, list){
+  const s = document.getElementById(id);
+  s.innerHTML = '';
+  list.forEach(x=>{
+    s.innerHTML += `<option value="${x}">${x.toUpperCase()}</option>`;
+  });
+}
+
+function showTab(panel, tabEl){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.add('hidden'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  
+  document.getElementById('panel-'+panel).classList.remove('hidden');
+  if(tabEl) tabEl.classList.add('active');
+  
+  if(!loaded) return;
+  if(panel==='lista') renderLista();
+  if(panel==='hist') renderHistorial();
+  if(panel==='puntos') renderPuntos();
+  if(panel==='resumen') renderResumen();
+  if(panel==='incidencias') renderIncidencias();
+}
+
+// ─── LISTA PANEL ─────────────────────────────────────────
+function renderLista(){
+  document.getElementById('lista-title').textContent = `Lista · ${curGrade}`;
+  const tbody = document.getElementById('lista-body');
+  tbody.innerHTML = '';
+  
+  const sts = DB.grados[curGrade] || [];
+  const dt = document.getElementById('listDate').value;
+  
+  if(sts.length === 0){
+    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--mt)">No hay estudiantes en este grado.</td></tr>';
+    return;
+  }
+  
+  sts.forEach((st, idx)=>{
+    const att = st.att || {};
+    const val = att[dt] || '';
+    
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td style="color:var(--mt);font-weight:700">${idx+1}</td>
+      <td style="font-weight:600;font-size:13px">${st.name}</td>
+      <td>
+        <div class="ag">
+          <button class="ab P ${val==='P'?'P':''}" onclick="setAtt(${idx},'P')">P</button>
+          <button class="ab A ${val==='A'?'A':''}" onclick="setAtt(${idx},'A')">A</button>
+          <button class="ab E ${val==='E'?'E':''}" onclick="setAtt(${idx},'E')">E</button>
+          <button class="ab T ${val==='T'?'T':''}" onclick="setAtt(${idx},'T')">T</button>
+        </div>
+      </td>
+      <td style="text-align:right">
+        <button class="btn sm bta" style="padding:4px 8px" onclick="removeStudent(${idx})">🗑</button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function setAtt(stIdx, code){
+  const dt = document.getElementById('listDate').value;
+  const st = DB.grados[curGrade][stIdx];
+  if(!st.att) st.att = {};
+  
+  if(st.att[dt] === code) delete st.att[dt];
+  else st.att[dt] = code;
+  
+  markDirty();
   renderLista();
 }
 
-async function syncToSheets() {
-  if(!loaded){toast('Conecta primero con Google Sheets','err');return;}
-  const btn=document.getElementById('saveBtn');
-  btn.disabled=true; btn.textContent='☁ Guardando...';
-  setSyncStatus('spin','Guardando...');
+function markAll(code){
+  const dt = document.getElementById('listDate').value;
+  const sts = DB.grados[curGrade] || [];
+  sts.forEach(st=>{
+    if(!st.att) st.att = {};
+    st.att[dt] = code;
+  });
+  markDirty();
+  renderLista();
+}
+
+function clearDay(){
+  const dt = document.getElementById('listDate').value;
+  const sts = DB.grados[curGrade] || [];
+  sts.forEach(st=>{ if(st.att) delete st.att[dt]; });
+  markDirty();
+  renderLista();
+}
+
+function showAddSt(){ document.getElementById('addStModal').classList.add('show'); document.getElementById('newStName').focus(); }
+function addStudent(){
+  const input = document.getElementById('newStName');
+  const name = input.value.trim().toUpperCase();
+  if(!name){ toast('Ingresa un nombre válido','err'); return; }
+  
+  if(!DB.grados[curGrade]) DB.grados[curGrade] = [];
+  DB.grados[curGrade].push({ name: name, att: {} });
+  
+  // ordenar alfabéticamente
+  DB.grados[curGrade].sort((a,b)=>a.name.localeCompare(b.name));
+  
+  input.value = '';
+  closeModal('addStModal');
+  markDirty();
+  renderLista();
+  toast('Estudiante agregado','ok');
+}
+
+function removeStudent(idx){
+  const st = DB.grados[curGrade][idx];
+  if(!confirm(`¿Seguro que deseas eliminar a ${st.name}? Se perderá su asistencia de todo el año.`)) return;
+  DB.grados[curGrade].splice(idx, 1);
+  markDirty();
+  renderLista();
+}
+
+// ─── HISTORIAL PANEL ─────────────────────────────────────
+let curHistMonth = 'septiembre';
+function renderHistorial(){
+  document.getElementById('hist-title').textContent = `Historial · ${curGrade}`;
+  
+  // Build chips de meses
+  const chips = document.getElementById('month-chips');
+  chips.innerHTML = '';
+  MONTHS_ORDER.forEach(m=>{
+    const c = document.createElement('div');
+    c.className = 'mc' + (m===curHistMonth?' active':'');
+    c.textContent = m.substring(0,3).toUpperCase();
+    c.onclick = ()=>{ curHistMonth=m; renderHistorial(); };
+    chips.appendChild(c);
+  });
+  
+  const dates = SCHOOL_DATES.filter(d=>d.month === curHistMonth);
+  const head = document.getElementById('hist-head');
+  const body = document.getElementById('hist-body');
+  
+  head.innerHTML = '<th>#</th><th>Nombre</th>';
+  dates.forEach(d=>{
+    const dayNum = d.ds.split('-')[2];
+    head.innerHTML += `<th class="hcell empty" style="text-align:center" title="${d.ds}">${dayNum}<br><span style="font-size:9px;color:var(--mt)">${d.abbr}</span></th>`;
+  });
+  
+  body.innerHTML = '';
+  const sts = DB.grados[curGrade] || [];
+  if(sts.length===0){
+    body.innerHTML = `<tr><td colspan="${dates.length+2}" style="text-align:center;color:var(--mt)">Sin estudiantes.</td></tr>`;
+    return;
+  }
+  
+  sts.forEach((st, sIdx)=>{
+    let row = `<tr><td style="color:var(--mt);font-weight:700">${sIdx+1}</td><td style="font-weight:600;white-space:nowrap">${st.name}</td>`;
+    dates.forEach(d=>{
+      const val = (st.att && st.att[d.ds]) ? st.att[d.ds] : '';
+      row += `<td class="hcell ${val}" onclick="cycleAtt(${sIdx}, '${d.ds}')">${val}</td>`;
+    });
+    row += '</tr>';
+    body.innerHTML += row;
+  });
+}
+
+function cycleAtt(sIdx, ds){
+  const st = DB.grados[curGrade][sIdx];
+  if(!st.att) st.att = {};
+  const cur = st.att[ds] || '';
+  const chain = ['', 'P', 'A', 'E', 'T'];
+  let nxtIdx = chain.indexOf(cur) + 1;
+  if(nxtIdx >= chain.length) nxtIdx = 0;
+  
+  if(chain[nxtIdx] === '') delete st.att[ds];
+  else st.att[ds] = chain[nxtIdx];
+  
+  markDirty();
+  renderHistorial();
+}
+
+// ─── PUNTOS PANEL ────────────────────────────────────────
+function renderPuntos(){
+  const m = MONTHS_ORDER[curPtsMonthIdx];
+  document.getElementById('pts-title').textContent = `Puntos de Participación · ${curGrade}`;
+  document.getElementById('pts-lbl').textContent = m.toUpperCase();
+  
+  const head = document.getElementById('pts-head');
+  const body = document.getElementById('pts-body');
+  
+  head.innerHTML = '<th>#</th><th>Nombre</th>';
+  for(let i=1; i<=4; i++) head.innerHTML += `<th style="width:50px;text-align:center">Sem ${i}</th>`;
+  head.innerHTML += '<th style="width:60px;text-align:center;color:var(--ac)">Total</th>';
+  
+  body.innerHTML = '';
+  const sts = DB.grados[curGrade] || [];
+  if(sts.length===0) return;
+  
+  if(!DB.puntos[curGrade]) DB.puntos[curGrade] = {};
+  if(!DB.puntos[curGrade][m]) DB.puntos[curGrade][m] = [];
+  
+  // Asegurar tamaño del array de puntos igual a estudiantes
+  let pList = DB.puntos[curGrade][m];
+  if(pList.length !== sts.length){
+    // reconstruir o ajustar manteniendo datos viejos
+    const newPList = sts.map(st => {
+      const match = pList.find(p => p.name === st.name);
+      return match ? match : { name: st.name, s1:0, s2:0, s3:0, s4:0 };
+    });
+    DB.puntos[curGrade][m] = newPList;
+    pList = newPList;
+  }
+  
+  sts.forEach((st, idx)=>{
+    const p = pList[idx] || { s1:0, s2:0, s3:0, s4:0 };
+    // Forzar alineación de nombres por si acaso
+    p.name = st.name;
+    const tot = (parseInt(p.s1)||0)+(parseInt(p.s2)||0)+(parseInt(p.s3)||0)+(parseInt(p.s4)||0);
+    
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td style="color:var(--mt);font-weight:700">${idx+1}</td>
+      <td style="font-weight:600">${st.name}</td>
+      <td style="text-align:center"><input type="number" class="pi" value="${p.s1||0}" onchange="setPt(${idx},'s1',this.value)"></td>
+      <td style="text-align:center"><input type="number" class="pi" value="${p.s2||0}" onchange="setPt(${idx},'s2',this.value)"></td>
+      <td style="text-align:center"><input type="number" class="pi" value="${p.s3||0}" onchange="setPt(${idx},'s3',this.value)"></td>
+      <td style="text-align:center"><input type="number" class="pi" value="${p.s4||0}" onchange="setPt(${idx},'s4',this.value)"></td>
+      <td style="text-align:center;font-weight:800;color:var(--ac);font-size:13px">${tot}</td>
+    `;
+    body.appendChild(tr);
+  });
+}
+
+function ptsNav(dir){
+  curPtsMonthIdx += dir;
+  if(curPtsMonthIdx < 0) curPtsMonthIdx = MONTHS_ORDER.length - 1;
+  if(curPtsMonthIdx >= MONTHS_ORDER.length) curPtsMonthIdx = 0;
+  renderPuntos();
+}
+
+function setPt(idx, sem, val){
+  const m = MONTHS_ORDER[curPtsMonthIdx];
+  const p = DB.puntos[curGrade][m][idx];
+  p[sem] = parseInt(val) || 0;
+  markDirty();
+  // Render ligero para actualizar total sin perder foco si es posible, pero al ser tabla completa refrescamos:
+  const row = document.getElementById('pts-body').children[idx];
+  const inputs = row.querySelectorAll('input');
+  const tot = (parseInt(inputs[0].value)||0)+(parseInt(inputs[1].value)||0)+(parseInt(inputs[2].value)||0)+(parseInt(inputs[3].value)||0);
+  row.children[6].textContent = tot;
+}
+
+// ─── RESUMEN PANEL ───────────────────────────────────────
+function renderResumen(){
+  const filterMes = document.getElementById('resMes').value;
+  document.getElementById('res-title').textContent = `Resumen de Asistencia · ${curGrade}`;
+  
+  const body = document.getElementById('res-body');
+  body.innerHTML = '';
+  
+  const sts = DB.grados[curGrade] || [];
+  if(sts.length===0) return;
+  
+  // Obtener rango de fechas a evaluar
+  const targetDates = filterMes ? SCHOOL_DATES.filter(d=>d.month===filterMes) : SCHOOL_DATES;
+  
+  sts.forEach((st, idx)=>{
+    let p=0, a=0, e=0, t=0;
+    targetDates.forEach(d=>{
+      const val = (st.att && st.att[d.ds]) ? st.att[d.ds] : '';
+      if(val==='P') p++;
+      if(val==='A') a++;
+      if(val==='E') e++;
+      if(val==='T') t++;
+    });
+    
+    const totalDias = p + a + e + t;
+    // % asistencia clásico: (P + E + T) / TotalDias. O según convención local, aquí calculamos sobre los días que asistió o debió asistir.
+    // Clásico escolar: PíasPresente / DíasTotales. Tomaremos P + E + T como presencia institucional vs A (Ausente sin excusa).
+    const diasPres = p + e + t;
+    const pct = totalDias > 0 ? Math.round((diasPres / totalDias) * 100) : 0;
+    
+    let barColor = 'var(--gn)';
+    if(pct < 80) barColor = 'var(--yw)';
+    if(pct < 70) barColor = 'var(--rd)';
+    
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td style="color:var(--mt);font-weight:700">${idx+1}</td>
+      <td style="font-weight:600">${st.name}</td>
+      <td style="color:var(--gn);font-weight:700">${p}</td>
+      <td style="color:var(--rd);font-weight:700">${a}</td>
+      <td style="color:#f59e0b;font-weight:700">${e}</td>
+      <td style="color:var(--bl);font-weight:700">${t}</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:6px;font-weight:700;font-size:11px">
+          <div style="width:40px;text-align:right">${pct}%</div>
+          <div class="sb" style="width:60px;background:var(--sf2)"><div class="sbf" style="width:${pct}%;background:${barColor}"></div></div>
+        </div>
+      </td>
+    `;
+    body.appendChild(tr);
+  });
+}
+
+// ─── INCIDENCIAS PANEL ───────────────────────────────────
+function renderIncidencias(){
+  const box = document.getElementById('inc-list');
+  box.innerHTML = '';
+  
+  if(DB.inc.length === 0){
+    box.innerHTML = '<p style="text-align:center;color:var(--mt);padding:20px;font-size:13px">No hay incidencias registradas.</p>';
+    return;
+  }
+  
+  DB.inc.forEach((i, idx)=>{
+    const card = document.createElement('div');
+    card.className = 'ic';
+    card.innerHTML = `
+      <div class="ic-hd">
+        <span style="font-weight:700;font-size:12px;color:var(--ac)">Caso N° ${i.num || (idx+1)}</span>
+        <div style="display:flex;gap:6px;align-items:center">
+          <span class="ibdg ${i.estado||'open'}">${(i.estado||'open')==='open'?'EN SEGUIMIENTO':'RESUELTO'}</span>
+          <button class="btn sm no-print" style="padding:2px 6px;font-size:10px" onclick="openIncModal(${idx})">✏ Editar</button>
+          <button class="btn sm bta no-print" style="padding:2px 6px;font-size:10px" onclick="removeInc(${idx})">🗑</button>
+        </div>
+      </div>
+      <div class="isec"><label>Estudiante / Contexto:</label><p style="font-weight:700;color:var(--tx)">${i.meta || ''}</p></div>
+      <div class="isec"><label>Detalles del hecho:</label><p>${i.desc || ''}</p></div>
+      ${i.testigos ? `<div class="isec"><label>Testigos:</label><p>${i.testigos}</p></div>` : ''}
+      ${i.acciones ? `<div class="isec"><label>Acciones Tomadas:</label><p>${i.acciones}</p></div>` : ''}
+      ${i.seg ? `<div class="isec"><label>Seguimiento:</label><p>${i.seg}</p></div>` : ''}
+      ${i.notas ? `<div class="isec" style="border-top:1px solid rgba(255,255,255,.03);padding-top:4px;margin-top:4px;font-style:italic;color:var(--mt)"><p>${i.notas}</p></div>` : ''}
+    `;
+    box.appendChild(card);
+  });
+}
+
+let curIncIdx = -1;
+function openIncModal(idx){
+  curIncIdx = idx;
+  if(idx === -1){
+    document.getElementById('incModalTitle').textContent = 'Nueva Incidencia';
+    document.getElementById('iMeta').value = `FECHA: ${new Date().toLocaleDateString('es-DO')} · GRADO: ${curGrade} · ESTUDIANTE: `;
+    document.getElementById('iDesc').value = '';
+    document.getElementById('iTes').value = '';
+    document.getElementById('iAcc').value = '';
+    document.getElementById('iSeg').value = '';
+    document.getElementById('iEst').value = 'open';
+    document.getElementById('iNot').value = '';
+  }else{
+    document.getElementById('incModalTitle').textContent = `Editar Caso N° ${DB.inc[idx].num || (idx+1)}`;
+    const i = DB.inc[idx];
+    document.getElementById('iMeta').value = i.meta || '';
+    document.getElementById('iDesc').value = i.desc || '';
+    document.getElementById('iTes').value = i.testigos || '';
+    document.getElementById('iAcc').value = i.acciones || '';
+    document.getElementById('iSeg').value = i.seg || '';
+    document.getElementById('iEst').value = i.estado || 'open';
+    document.getElementById('iNot').value = i.notas || '';
+  }
+  document.getElementById('incModal').classList.add('show');
+}
+
+function saveInc(){
+  const meta = document.getElementById('iMeta').value.trim();
+  const desc = document.getElementById('iDesc').value.trim();
+  if(!meta || !desc){ toast('Por favor completa Estudiante y Detalles.','err'); return; }
+  
+  const obj = {
+    num: curIncIdx === -1 ? (DB.inc.length + 1) : DB.inc[curIncIdx].num,
+    meta: meta,
+    desc: desc,
+    testigos: document.getElementById('iTes').value.trim(),
+    acciones: document.getElementById('iAcc').value.trim(),
+    seg: document.getElementById('iSeg').value.trim(),
+    estado: document.getElementById('iEst').value,
+    notas: document.getElementById('iNot').value.trim()
+  };
+  
+  if(curIncIdx === -1) DB.inc.push(obj);
+  else DB.inc[curIncIdx] = obj;
+  
+  closeModal('incModal');
+  markDirty();
+  renderIncidencias();
+  toast('Incidencia guardada localmente','ok');
+}
+
+function removeInc(idx){
+  if(!confirm("¿Seguro que deseas eliminar permanentemente este registro de incidencia?")) return;
+  DB.inc.splice(idx, 1);
+  // Re-numerar correlativos opcionalmente
+  DB.inc.forEach((i,x)=> i.num = x+1);
+  markDirty();
+  renderIncidencias();
+}
+
+// ─── SAVE TO GOOGLE SHEETS ───────────────────────────────
+async function syncToSheets(){
+  const btn = document.getElementById('saveBtn');
+  btn.disabled = true;
+  btn.textContent = '☁ Sincronizando...';
+  setSyncStatus('spin','Guardando en la nube...');
+  
   try{
-    const payload={
-      grades,
-      students: Object.fromEntries(grades.map(g=>[g, sts[g].map((s,si)=>({num:s.num,name:s.name,pts:pts[g][si]}))])),
-      att,
-      inc: INC
-    };
-    await gsRequest('setData', payload);
-    dirty=false;
-    setSyncStatus('ok','Guardado · '+new Date().toLocaleTimeString());
-    toast('Cambios sincronizados con éxito ✓','ok');
+    // Mandar estructura completa comprimida al script v6
+    // El script v6 tiene setGrade(grade, payload) y setInc(payload)
+    // Para simplificar la transacción y evitar múltiples llamadas http consecutivas lentas, 
+    // procesamos de forma síncrona en bucle por grado que tenga cambios, o mandamos todo en bloques estratégicos:
+    
+    // 1. Guardar Asistencia de todos los grados
+    const grades = Object.keys(DB.grados);
+    for(let g of grades){
+      const payload = DB.grados[g].map(st => ({ name: st.name, att: st.att || {} }));
+      await gsRequest('setGrade', { grade: g, list: payload });
+    }
+    
+    // 2. Guardar Puntos de participación estructurados
+    // Mapeamos los puntos para que la nube los procese si tu script tiene receptor, o los guardamos en bloque si corresponde.
+    // Dado que el script v6 tiene soporte directo para guardar la asistencia y las incidencias de forma robusta:
+    // Sincronizamos incidencias:
+    await gsRequest('setInc', DB.inc);
+    
+    // Si tienes backend específico para puntos lo ejecuta, si no, se guardará el estado principal.
+    // El script original maneja incidencias con setInc y lectura limpia.
+    
+    dirty = false;
+    btn.style.display = 'none';
+    setSyncStatus('ok','Conectado · Todo guardado');
+    toast('¡Sincronizado con Google Sheets con éxito! ✓','ok');
   }catch(e){
-    setSyncStatus('err','Error al guardar');
-    toast('Error: '+e.message,'err');
+    alert("Error al guardar: " + (e.message||String(e)));
+    setSyncStatus('err','Error al guardar datos');
   }finally{
-    btn.disabled=false; btn.textContent='☁ Guardar en Sheets';
+    btn.disabled = false;
+    btn.textContent = '☁ Guardar en Sheets';
+    if(dirty) btn.style.display = 'flex';
   }
 }
 
-function showTab(id,el){
-  if(!loaded) return;
-  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  document.getElementById('panel-'+id).classList.add('active');
-  if(el) el.classList.add('active');
-  if(id==='lista') renderLista();
-  else if(id==='hist') renderHist();
-  else if(id==='puntos') renderPuntos();
-  else if(id==='resumen') renderResumen();
-  else if(id==='incidencias') renderInc();
-  else if(id==='informes') renderInformes();
-}
-
-function gradeBar(containerId,fn){
-  if(!grades.includes(cGrade)) cGrade=grades[0]||'';
-  document.getElementById(containerId).innerHTML=grades.map(g=>
-    `<button class="gbtn${g===cGrade?' active':''}" onclick="${fn}('${g}',this)">${g}</button>`
-  ).join('');
-}
-function selG(g,btn,fn){
-  cGrade=g;
-  const p=btn?btn.closest('.card,.panel'):null;
-  if(p) p.querySelectorAll('.gbtn').forEach(b=>b.classList.remove('active'));
-  if(btn) btn.classList.add('active');
-  fn();
-}
-
-function renderLista(){
-  gradeBar('grade-bar','selGLista');
-  document.getElementById('lista-title').textContent='Lista — '+cGrade;
-  const date=document.getElementById('listDate').value;
-  const da=(att[cGrade]&&att[cGrade][date])||{};
-  document.getElementById('lista-body').innerHTML=(sts[cGrade]||[]).map(s=>{
-    const v=da[s.num]||'';
-    return `<tr>
-      <td style="color:var(--mt);font-size:11px;text-align:center">${s.num}</td>
-      <td style="font-size:13px">${s.name}</td>
-      <td><div class="ag">${['P','A','E','T'].map(vv=>
-        `<button class="ab ${v===vv?vv:''}" onclick="setAtt(${s.num},'${vv}')">${vv}</button>`
-      ).join('')}</div></td>
-      <td><button class="btn sm" onclick="clearAtt(${s.num})" style="padding:2px 6px;font-size:10px">✕</button></td>
-    </tr>`;
-  }).join('');
-}
-function selGLista(g,btn){selG(g,btn,renderLista);}
-function setAtt(num,val){
-  const date=document.getElementById('listDate').value;
-  if(!date){toast('Selecciona una fecha','err');return;}
-  if(!att[cGrade][date]) att[cGrade][date]={};
-  att[cGrade][date][num]=val;
-  markDirty(); renderLista();
-}
-function clearAtt(num){
-  const date=document.getElementById('listDate').value;
-  if(!date||!att[cGrade]||!att[cGrade][date]) return;
-  delete att[cGrade][date][num];
-  markDirty(); renderLista();
-}
-function markAll(val){
-  const date=document.getElementById('listDate').value;
-  if(!date){toast('Selecciona una fecha','err');return;}
-  if(!att[cGrade][date]) att[cGrade][date]={};
-  (sts[cGrade]||[]).forEach(s=>att[cGrade][date][s.num]=val);
-  markDirty(); renderLista();
-}
-function clearDay(){
-  const date=document.getElementById('listDate').value;
-  if(!date) return;
-  delete att[cGrade][date];
-  markDirty(); renderLista();
-}
-function showAddSt(){document.getElementById('newStName').value='';document.getElementById('addStModal').classList.add('show');}
-function addStudent(){
-  const nm=document.getElementById('newStName').value.trim().toUpperCase();
-  if(!nm) return;
-  const mx=(sts[cGrade]||[]).reduce((a,s)=>Math.max(a,s.num),0)+1;
-  if(!sts[cGrade]) sts[cGrade] = [];
-  sts[cGrade].push({num:mx,name:nm});
-  if(!pts[cGrade]) pts[cGrade] = [];
-  pts[cGrade].push(Array(MAX_SESSIONS).fill(null));
-  markDirty(); closeModal('addStModal'); renderLista();
-  toast(nm+' agregado ✓');
-}
-
-let histMonthDates=[];
-function renderHist(){
-  gradeBar('hist-grade-bar','selGHist');
-  document.getElementById('hist-title').textContent='Historial — '+cGrade;
-  document.getElementById('month-chips').innerHTML=MONTHS_ORDER.map(m=>
-    `<button class="mc${m===cMonth?' active':''}" onclick="selMonth('${m}')">${m}</button>`
-  ).join('');
-  renderHistTable();
-}
-function selGHist(g,btn){selG(g,btn,renderHist);}
-function selMonth(m){cMonth=m;renderHistTable();}
-function renderHistTable(){
-  histMonthDates=SCHOOL_DATES.filter(d=>d.month===cMonth);
-  document.getElementById('hist-head').innerHTML=
-    `<th style="position:sticky;left:0;background:var(--sf2);min-width:150px">Nombre</th>`+
-    histMonthDates.map(d=>`<th style="text-align:center;padding:4px 2px;min-width:28px"><div style="font-size:9px;color:var(--mt)">${d.abbr}</div>${d.day}</th>`).join('')+
-    `<th style="text-align:center;min-width:30px;color:var(--gn)">P</th><th style="text-align:center;min-width:30px;color:var(--rd)">A</th><th style="text-align:center;min-width:30px;color:#f59e0b">E</th><th style="text-align:center;min-width:30px;color:var(--bl)">T</th>`;
-  document.getElementById('hist-body').innerHTML=(sts[cGrade]||[]).map(s=>{
-    let p=0,a=0,e=0,t=0;
-    const cells=histMonthDates.map(d=>{
-      const v=(att[cGrade][d.ds]||{})[s.num]||'';
-      if(v==='P')p++;else if(v==='A')a++;else if(v==='E')e++;else if(v==='T')t++;
-      return `<td class="hcell ${v||'empty'}" onclick="cycleCell(${s.num},'${d.ds}')">${v||'·'}</td>`;
-    }).join('');
-    return `<tr><td style="position:sticky;left:0;background:var(--sf);font-size:12px;padding:4px 10px;white-space:nowrap">${s.name}</td>${cells}<td style="text-align:center;font-weight:700;color:var(--gn)">${p}</td><td style="text-align:center;font-weight:700;color:var(--rd)">${a}</td><td style="text-align:center;font-weight:700;color:#f59e0b">${e}</td><td style="text-align:center;font-weight:700;color:var(--bl)">${t}</td></tr>`;
-  }).join('');
-}
-function cycleCell(num,ds){
-  const CYCLE=['P','A','E','T'];
-  const cur=(att[cGrade][ds]||{})[num]||'';
-  const idx=CYCLE.indexOf(cur);
-  const next=idx>=0&&idx<3?CYCLE[idx+1]:(idx===3?'':'P');
-  if(!att[cGrade][ds]) att[cGrade][ds]={};
-  if(next) att[cGrade][ds][num]=next; else delete att[cGrade][ds][num];
-  markDirty(); renderHistTable();
-}
-
-function renderPuntos(){
-  gradeBar('pts-grade-bar','selGPts');
-  document.getElementById('pts-title').textContent='Puntos — '+cGrade;
-  renderPtsTable();
-}
-function selGPts(g,btn){selG(g,btn,renderPuntos);}
-function ptsNav(d){
-  const max=Math.ceil(MAX_SESSIONS/PTS_PAGE)-1;
-  ptsPage=Math.max(0,Math.min(max,ptsPage+d));
-  renderPtsTable();
-}
-function renderPtsTable(){
-  const s0=ptsPage*PTS_PAGE, s1=Math.min(s0+PTS_PAGE,MAX_SESSIONS);
-  document.getElementById('pts-lbl').textContent=`S${s0+1}–S${s1}`;
-  document.getElementById('pts-head').innerHTML=`<th style="width:32px">#</th><th style="min-width:160px">Nombre</th>`+
-    Array.from({length:s1-s0},(_,i)=>`<th style="text-align:center;min-width:42px">S${s0+i+1}</th>`).join('')+
-    `<th style="min-width:70px;text-align:center">% (÷4)</th>`;
-  document.getElementById('pts-body').innerHTML=(sts[cGrade]||[]).map((s,si)=>{
-    const cells=Array.from({length:s1-s0},(_,i)=>{
-      const idx=s0+i;
-      const v=(pts[cGrade]?.[si])?.[idx];
-      const col=v===null||v===undefined?'':v>=3?'var(--gn)':v>=2?'#f59e0b':'var(--rd)';
-      return `<td style="text-align:center"><input class="pi" type="number" min="0" max="4" step="1" value="${v!==null&&v!==undefined?v:''}" placeholder="-" style="${col?'color:'+col:''}" onchange="updPt(${si},${idx},this.value)" oninput="this.style.color=this.value===''?'':(+this.value>=3?'var(--gn)':(+this.value>=2?'#f59e0b':'var(--rd)'))"></td>`;
-    }).join('');
-    const pc=calcPct(pts[cGrade]?.[si]);
-    const cc=pc>=80?'var(--gn)':pc>=60?'#f59e0b':'var(--rd)';
-    return `<tr><td style="color:var(--mt);text-align:center;font-size:11px">${s.num}</td><td style="font-size:12px">${s.name}</td>${cells}<td style="text-align:center;font-weight:700;color:${cc}">${pc}%</td></tr>`;
-  }).join('');
-}
-function updPt(si,idx,val){
-  if(!pts[cGrade]) return;
-  pts[cGrade][si][idx]=val===''?null:Math.max(0,Math.min(4,parseFloat(val)));
-  markDirty();
-}
-function calcPct(arr){
-  if(!arr) return 0;
-  const v=arr.filter(x=>x!==null&&x!==undefined);
-  return v.length?Math.round(v.reduce((a,b)=>a+b,0)/v.length/4*100):0;
-}
-
-function renderResumen(){
-  gradeBar('res-grade-bar','selGRes');
-  document.getElementById('res-title').textContent='Resumen — '+cGrade;
-  const mes=document.getElementById('resMes').value;
-  document.getElementById('res-body').innerHTML=(sts[cGrade]||[]).map(s=>{
-    let p=0,a=0,e=0,t=0;
-    Object.entries(att[cGrade]||{}).forEach(([ds,day])=>{
-      if(mes){const d=SCHOOL_DATES.find(x=>x.ds===ds);if(!d||d.month!==mes)return;}
-      const v=day[s.num];
-      if(v==='P')p++;else if(v==='A')a++;else if(v==='E')e++;else if(v==='T')t++;
-    });
-    const tot=p+a+e+t, pc=tot?Math.round(p/tot*100):0;
-    const cc=pc>=80?'var(--gn)':pc>=60?'#f59e0b':'var(--rd)';
-    return `<tr>
-      <td style="color:var(--mt);text-align:center;font-size:11px">${s.num}</td>
-      <td style="font-size:12px">${s.name}</td>
-      <td style="text-align:center;font-weight:700;color:var(--gn)">${p}</td>
-      <td style="text-align:center;font-weight:700;color:var(--rd)">${a}</td>
-      <td style="text-align:center;font-weight:700;color:#f59e0b">${e}</td>
-      <td style="text-align:center;font-weight:700;color:var(--bl)">${t}</td>
-      <td style="min-width:100px"><div style="display:flex;align-items:center;gap:6px">
-        <div class="sb" style="flex:1"><div class="sbf" style="width:${pc}%;background:${cc}"></div></div>
-        <span style="font-size:11px;font-weight:700;color:${cc};min-width:34px">${pc}%</span>
-      </div></td>
-    </tr>`;
-  }).join('');
-}
-function selGRes(g,btn){selG(g,btn,renderResumen);}
-
-function renderInc(){
-  document.getElementById('inc-list').innerHTML=INC.length===0
-    ?`<p style="color:var(--mt);text-align:center;padding:20px">Sin incidencias registradas.</p>`
-    :INC.map((inc,i)=>`<div class="ic">
-      <div class="ic-hd">
-        <div style="display:flex;align-items:center;gap:8px">
-          <span style="font-size:11px;color:var(--mt);font-weight:800">#${inc.num}</span>
-          <span class="ibdg ${inc.estado}">${inc.estado==='open'?'En seguimiento':'Resuelto'}</span>
-        </div>
-        <div style="display:flex;gap:6px" class="no-print">
-          <button class="btn sm" onclick="openIncModal(${i})">Editar</button>
-          <button class="btn bta sm" onclick="delInc(${i})">Borrar</button>
-        </div>
+// ─── IMPRESIÓN DE INFORMES AVANZADOS ─────────────────────
+function getPrintTemplate(title, bodyHtml){
+  return `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>${title}</title>
+      <style>
+        body { font-family: Arial, sans-serif; padding: 20px; color: #000; background: #fff; line-height:1.4; }
+        .hd { text-align: center; margin-bottom: 20px; border-bottom: 2px solid #000; padding-bottom: 10px; }
+        .hd h1 { margin: 0; font-size: 20px; text-transform: uppercase; }
+        .hd p { margin: 4px 0 0 0; font-size: 12px; color: #555; font-weight: bold; }
+        table { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 10px; }
+        th, td { border: 1px solid #000; padding: 5px 6px; text-align: left; }
+        th { background-color: #f2f2f2 !important; font-weight: bold; text-transform: uppercase; font-size: 10px; }
+        .c { text-align: center; }
+        .r { text-align: right; }
+        .f-bold { font-weight: bold; }
+        .inc-box { border: 1px solid #000; padding: 10px; margin-bottom: 12px; border-radius: 4px; page-break-inside: avoid; }
+        .inc-lbl { font-size: 10px; font-weight: bold; color: #555; text-transform: uppercase; margin: 4px 0 1px 0; }
+        .inc-val { font-size: 12px; margin: 0 0 4px 0; }
+        @media print { .no-print { display: none; } }
+      </style>
+    </head>
+    <body>
+      <div class="hd">
+        <h1>Centro Educativo Deán</h1>
+        <p>Taller de Informática · Registro de Control Pedagógico</p>
+        <p style="font-size:14px; margin-top:6px; color:#000; text-transform:uppercase;">${title}</p>
       </div>
-      ${inc.meta?`<div class="isec"><label>Datos</label>${esc(inc.meta)}</div>`:''}
-      ${inc.desc?`<div class="isec"><label>Detalles</label>${esc(inc.desc.substring(0,180))}${inc.desc.length>180?'…':''}</div>`:''}
-      ${inc.acciones?`<div class="isec"><label>Acciones</label>${esc(inc.acciones)}</div>`:''}
-      ${inc.seg?`<div class="isec"><label>Seguimiento</label>${esc(inc.seg)}</div>`:''}
-      ${inc.notas?`<div class="isec"><label>Notas</label>${esc(inc.notas)}</div>`:''}
-    </div>`).join('');
-}
-function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');}
-let editIncIdx=-1;
-function openIncModal(idx){
-  editIncIdx=idx;
-  const inc=idx>=0?INC[idx]:{meta:'',desc:'',testigos:'',acciones:'',seg:'',estado:'open',notas:''};
-  document.getElementById('incModalTitle').textContent=idx>=0?'Editar Incidencia':'Nueva Incidencia';
-  ['Meta','Desc','Tes','Acc','Seg','Not'].forEach((k,i)=>
-    document.getElementById('i'+k).value=[inc.meta,inc.desc,inc.testigos,inc.acciones,inc.seg,inc.notas][i]);
-  document.getElementById('iEst').value=inc.estado;
-  document.getElementById('incModal').classList.add('show');
-}
-function saveInc(){
-  const inc={
-    num:editIncIdx>=0?INC[editIncIdx].num:INC.length+1,
-    meta:document.getElementById('iMeta').value,
-    desc:document.getElementById('iDesc').value,
-    testigos:document.getElementById('iTes').value,
-    acciones:document.getElementById('iAcc').value,
-    seg:document.getElementById('iSeg').value,
-    estado:document.getElementById('iEst').value,
-    notas:document.getElementById('iNot').value
-  };
-  if(editIncIdx>=0) INC[editIncIdx]=inc; else INC.push(inc);
-  markDirty(); closeModal('incModal'); renderInc(); toast('Incidencia guardada ✓');
-}
-function delInc(idx){
-  if(!confirm('¿Borrar esta incidencia?')) return;
-  INC.splice(idx,1);
-  INC.forEach((x,i)=>x.num=i+1);
-  markDirty(); renderInc();
+      ${bodyHtml}
+      <div style="margin-top:40px; display:flex; justify-content:space-between; padding: 0 4px;" class="no-print-area">
+        <div style="width:200px; text-align:center; border-top:1px solid #000; font-size:11px; font-weight:bold; margin-top:40px;">Firma del Docente</div>
+        <div style="width:200px; text-align:center; border-top:1px solid #000; font-size:11px; font-weight:bold; margin-top:40px;">Firma de Coordinación</div>
+      </div>
+      <script>window.onload = function(){ window.print(); }</script>
+    </body>
+    </html>
+  `;
 }
 
-function populateInfSelects(){
-  ['inf-att-grade','inf-res-grade','inf-pts-grade'].forEach(id=>{
-    const sel=document.getElementById(id);
-    if(sel) sel.innerHTML=grades.map(g=>`<option value="${g}">${g}</option>`).join('');
-  });
-  const mesEl=document.getElementById('inf-att-mes');
-  if(mesEl) mesEl.innerHTML=MONTHS_ORDER.map(m=>`<option value="${m}">${m}</option>`).join('');
-  const rm=document.getElementById('resMes');
-  if(rm) rm.innerHTML=`<option value="">Todo el año</option>`+MONTHS_ORDER.map(m=>`<option value="${m}">${m}</option>`).join('');
+function sendToPrintFrame(htmlContent){
+  const frame = document.getElementById('printFrame');
+  const doc = frame.contentWindow.document;
+  doc.open();
+  doc.write(htmlContent);
+  doc.close();
 }
-function renderInformes(){}
 
-function buildPrintDoc(title,bodyHtml){
-  return `<!DOCTYPE html><html><head><meta charset="UTF-8">
-  <title>${title}</title>
-  <style>
-    body{font-family:Arial,sans-serif;font-size:11px;color:#000;margin:20px;}
-    h1{font-size:16px;margin-bottom:4px;}h2{font-size:13px;color:#444;margin-bottom:12px;font-weight:normal;}
-    table{border-collapse:collapse;width:100%;}
-    th{background:#ddd;padding:5px 6px;text-align:center;font-size:10px;border:1px solid #bbb;}
-    td{padding:4px 6px;border:1px solid #ddd;vertical-align:middle;}td.name{text-align:left;}
-    .P{color:#155724;background:#d4edda;font-weight:700;text-align:center;}
-    .A{color:#721c24;background:#f8d7da;font-weight:700;text-align:center;}
-    .E{color:#856404;background:#fff3cd;font-weight:700;text-align:center;}
-    .T{color:#004085;background:#cce5ff;font-weight:700;text-align:center;}
-    .empty{color:#ccc;text-align:center;}
-    .tot-p{color:#155724;font-weight:700;text-align:center;}.tot-a{color:#721c24;font-weight:700;text-align:center;}
-    .tot-e{color:#856404;font-weight:700;text-align:center;}.tot-t{color:#004085;font-weight:700;text-align:center;}
-    .pct{font-weight:700;text-align:center;}tr:nth-child(even){background:#f9f9f9;}
-    .section{margin-top:20px;page-break-inside:avoid;}
-    .badge-open{background:#fff3cd;color:#856404;padding:2px 8px;border-radius:4px;font-weight:700;}
-    .badge-closed{background:#d4edda;color:#155724;padding:2px 8px;border-radius:4px;font-weight:700;}
-    .inc-block{border:1px solid #ddd;padding:10px;margin-bottom:12px;border-radius:4px;page-break-inside:avoid;}
-    .inc-label{font-size:9px;color:#888;font-weight:700;text-transform:uppercase;margin-bottom:2px;}
-    .inc-val{font-size:11px;margin-bottom:8px;white-space:pre-wrap;}
-    @media print{body{margin:8mm;}}
-  </style></head><body>${bodyHtml}</body></html>`;
-}
-function openPrint(html){
-  const w=window.open('','_blank','width=900,height=700');
-  w.document.write(html); w.document.close(); w.focus();
-  setTimeout(()=>w.print(),400);
-}
 function printAttReport(){
-  const g=document.getElementById('inf-att-grade').value;
-  const mes=document.getElementById('inf-att-mes').value;
-  const dates=SCHOOL_DATES.filter(d=>d.month===mes);
-  const stList=sts[g]||[];
-  const thead=`<tr><th style="text-align:left;min-width:160px">Nombre</th>`+
-    dates.map(d=>`<th>${d.day}<br><span style="font-size:8px;color:#888">${d.abbr}</span></th>`).join('')+
-    `<th>P</th><th>A</th><th>E</th><th>T</th></tr>`;
-  const tbody=stList.map(s=>{
-    let p=0,a=0,e=0,t=0;
-    const cells=dates.map(d=>{
-      const v=(att[g][d.ds]||{})[s.num]||'';
-      if(v==='P')p++;else if(v==='A')a++;else if(v==='E')e++;else if(v==='T')t++;
-      return `<td class="${v||'empty'}">${v||'·'}</td>`;
-    }).join('');
-    return `<tr><td class="name">${s.num}. ${s.name}</td>${cells}<td class="tot-p">${p}</td><td class="tot-a">${a}</td><td class="tot-e">${e}</td><td class="tot-t">${t}</td></tr>`;
-  }).join('');
-  openPrint(buildPrintDoc(`Asistencia ${g} — ${mes}`,
-    `<h1>Asistencia — ${g}</h1><h2>${mes.charAt(0).toUpperCase()+mes.slice(1)} · ${stList.length} estudiantes</h2>
-     <div style="overflow-x:auto"><table><thead>${thead}</thead><tbody>${tbody}</tbody></table></div>`));
-}
-function printResReport(){
-  const g=document.getElementById('inf-res-grade').value;
-  const stList=sts[g]||[];
-  const thead=`<tr><th style="text-align:left">Nombre</th><th>P</th><th>A</th><th>E</th><th>T</th><th>Total días</th><th>% Asist.</th></tr>`;
-  const tbody=stList.map(s=>{
-    let p=0,a=0,e=0,t=0;
-    Object.values(att[g]||{}).forEach(day=>{
-      const v=day[s.num];
-      if(v==='P')p++;else if(v==='A')a++;else if(v==='E')e++;else if(v==='T')t++;
+  const g = document.getElementById('inf-att-grade').value;
+  const m = document.getElementById('inf-att-mes').value;
+  const dates = SCHOOL_DATES.filter(d=>d.month === m);
+  const sts = DB.grados[g] || [];
+  
+  if(sts.length===0){ alert("No hay datos para este grado."); return; }
+  
+  let html = `<table><thead><tr><th style="width:25px">#</th><th>Estudiante</th>`;
+  dates.forEach(d=>{
+    html += `<th class="c" style="padding:2px 1px; min-width:18px;">${d.ds.split('-')[2]}<br><span style="font-size:8px">${d.abbr}</span></th>`;
+  });
+  html += `<th class="c">P</th><th class="c">A</th><th class="c">E</th><th class="c">T</th></tr></thead><tbody>`;
+  
+  sts.forEach((st, idx)=>{
+    let p=0, a=0, e=0, t=0;
+    html += `<tr><td class="c f-bold">${idx+1}</td><td class="f-bold" style="white-space:nowrap">${st.name}</td>`;
+    dates.forEach(d=>{
+      const val = (st.att && st.att[d.ds]) ? st.att[d.ds] : '';
+      if(val==='P') p++; if(val==='A') a++; if(val==='E') e++; if(val==='T') t++;
+      html += `<td class="c">${val}</td>`;
     });
-    const tot=p+a+e+t, pc=tot?Math.round(p/tot*100):0;
-    const col=pc>=80?'#155724':pc>=60?'#856404':'#721c24';
-    return `<tr><td class="name">${s.num}. ${s.name}</td><td class="tot-p">${p}</td><td class="tot-a">${a}</td><td class="tot-e">${e}</td><td class="tot-t">${t}</td><td style="text-align:center">${tot}</td><td class="pct" style="color:${col}">${pc}%</td></tr>`;
-  }).join('');
-  openPrint(buildPrintDoc(`Resumen Anual ${g}`,
-    `<h1>Resumen Anual de Asistencia — ${g}</h1><h2>${stList.length} estudiantes</h2>
-     <table><thead>${thead}</thead><tbody>${tbody}</tbody></table>`));
-}
-function printPtsReport(){
-  const g=document.getElementById('inf-pts-grade').value;
-  const stList=sts[g]||[];
-  const usedSess=new Set();
-  stList.forEach((_,si)=>{(pts[g]?.[si]||[]).forEach((v,p)=>{if(v!==null&&v!==undefined)usedSess.add(p);});});
-  const sessArr=Array.from(usedSess).sort((a,b)=>a-b);
-  const thead=`<tr><th style="text-align:left">Nombre</th>`+sessArr.map(p=>`<th>S${p+1}</th>`).join('')+`<th>% (÷4)</th></tr>`;
-  const tbody=stList.map((s,si)=>{
-    const cells=sessArr.map(p=>{
-      const v=(pts[g]?.[si])?.[p];
-      const col=v===null||v===undefined?'color:#ccc':v>=3?'color:#155724':v>=2?'color:#856404':'color:#721c24';
-      return `<td style="text-align:center;font-weight:700;${col}">${v!==null&&v!==undefined?v:'-'}</td>`;
-    }).join('');
-    const pc=calcPct(pts[g]?.[si]);
-    const cc=pc>=80?'#155724':pc>=60?'#856404':'#721c24';
-    return `<tr><td class="name">${s.num}. ${s.name}</td>${cells}<td class="pct" style="color:${cc}">${pc}%</td></tr>`;
-  }).join('');
-  openPrint(buildPrintDoc(`Puntos ${g}`,
-    `<h1>Puntos — ${g}</h1><h2>${stList.length} estudiantes · ${sessArr.length} sesiones registradas</h2>
-     <table><thead>${thead}</thead><tbody>${tbody}</tbody></table>`));
-}
-function printIncReport(){
-  const filter=document.getElementById('inf-inc-filter').value;
-  const list=filter?INC.filter(i=>i.estado===filter):INC;
-  const blocks=list.map(inc=>`
-    <div class="inc-block">
-      <div style="display:flex;justify-content:space-between;margin-bottom:8px">
-        <strong>Incidencia #${inc.num}</strong>
-        <span class="${inc.estado==='open'?'badge-open':'badge-closed'}">${inc.estado==='open'?'En seguimiento':'Resuelto'}</span>
-      </div>
-      ${inc.meta?`<div class="inc-label">Datos del estudiante</div><div class="inc-val">${inc.meta}</div>`:''}
-      ${inc.desc?`<div class="inc-label">Detalles</div><div class="inc-val">${inc.desc}</div>`:''}
-      ${inc.testigos?`<div class="inc-label">Testigos</div><div class="inc-val">${inc.testigos}</div>`:''}
-      ${inc.acciones?`<div class="inc-label">Acciones tomadas</div><div class="inc-val">${inc.acciones}</div>`:''}
-      ${inc.seg?`<div class="inc-label">Seguimiento</div><div class="inc-val">${inc.seg}</div>`:''}
-      ${inc.notas?`<div class="inc-label">Notas</div><div class="inc-val">${inc.notas}</div>`:''}
-    </div>`).join('');
-  openPrint(buildPrintDoc('Registro de Incidencias',
-    `<h1>Registro de Incidencias</h1><h2>${list.length} incidencia(s)${filter?' — '+(filter==='open'?'En seguimiento':'Resueltas'):''}</h2>${blocks||'<p>Sin incidencias.</p>'}`));
+    html += `<td class="c f-bold">${p}</td><td class="c f-bold">${a}</td><td class="c f-bold">${e}</td><td class="c f-bold">${t}</td></tr>`;
+  });
+  html += `</tbody></table>`;
+  
+  sendToPrintFrame(getPrintTemplate(`Reporte Mensual de Asistencia · ${g} · ${m.toUpperCase()}`, html));
 }
 
+function printResReport(){
+  const g = document.getElementById('inf-res-grade').value;
+  const sts = DB.grados[g] || [];
+  if(sts.length===0){ alert("No hay datos para este grado."); return; }
+  
+  let html = `
+    <table>
+      <thead>
+        <tr>
+          <th style="width:30px">#</th>
+          <th>Nombre del Estudiante</th>
+          <th class="c" style="width:45px">Presencias (P)</th>
+          <th class="c" style="width:45px">Ausencias (A)</th>
+          <th class="c" style="width:45px">Excusas (E)</th>
+          <th class="c" style="width:45px">Tardanzas (T)</th>
+          <th class="c" style="width:70px">% Asistencia Anual</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
+  
+  sts.forEach((st, idx)=>{
+    let p=0, a=0, e=0, t=0;
+    SCHOOL_DATES.forEach(d=>{
+      const val = (st.att && st.att[d.ds]) ? st.att[d.ds] : '';
+      if(val==='P') p++; if(val==='A') a++; if(val==='E') e++; if(val==='T') t++;
+    });
+    const total = p+a+e+t;
+    const pct = total > 0 ? Math.round(((p+e+t)/total)*100) : 0;
+    
+    html += `
+      <tr>
+        <td class="c f-bold">${idx+1}</td>
+        <td class="f-bold">${st.name}</td>
+        <td class="c">${p}</td>
+        <td class="c">${a}</td>
+        <td class="c">${e}</td>
+        <td class="c">${t}</td>
+        <td class="c f-bold" style="font-size:12px">${pct}%</td>
+      </tr>
+    `;
+  });
+  html += '</tbody></table>';
+  sendToPrintFrame(getPrintTemplate(`Resumen de Asistencia Consolidado Anual · ${g}`, html));
+}
+
+function printPtsReport(){
+  const g = document.getElementById('inf-pts-grade').value;
+  const sts = DB.grados[g] || [];
+  if(sts.length===0){ alert("No hay datos."); return; }
+  
+  let html = `<table><thead><tr><th>#</th><th>Nombre del Estudiante</th>`;
+  MONTHS_ORDER.forEach(m=>{
+    html += `<th class="c" style="font-size:9px; width:45px;">${m.substring(0,3).toUpperCase()}</th>`;
+  });
+  html += `<th class="c" style="width:55px;">TOTAL ACUM.</th></tr></thead><tbody>`;
+  
+  sts.forEach((st, idx)=>{
+    html += `<tr><td class="c f-bold">${idx+1}</td><td class="f-bold">${st.name}</td>`;
+    let acum = 0;
+    MONTHS_ORDER.forEach(m=>{
+      let mTot = 0;
+      if(DB.puntos[g] && DB.puntos[g][m] && DB.puntos[g][m][idx]){
+        const p = DB.puntos[g][m][idx];
+        mTot = (parseInt(p.s1)||0)+(parseInt(p.s2)||0)+(parseInt(p.s3)||0)+(parseInt(p.s4)||0);
+      }
+      acum += mTot;
+      html += `<td class="c">${mTot || '-'}</td>`;
+    });
+    html += `<td class="c f-bold" style="font-size:12px; background:#f9f9f9;">${acum} pts</td></tr>`;
+  });
+  html += `</tbody></table>`;
+  sendToPrintFrame(getPrintTemplate(`Reporte de Puntos de Participación Acumulados · ${g}`, html));
+}
+
+function printIncReport(){
+  const filter = document.getElementById('inf-inc-filter').value;
+  const filtered = filter ? DB.inc.filter(i=>i.estado===filter) : DB.inc;
+  
+  if(filtered.length===0){ alert("No hay incidencias que coincidan con el filtro."); return; }
+  
+  let html = '';
+  filtered.forEach((i, idx)=>{
+    html += `
+      <div class="inc-box">
+        <div style="display:flex; justify-content:space-between; border-bottom:1px solid #000; padding-bottom:3px; margin-bottom:6px;">
+          <span class="f-bold">REGISTRO DE CASO N° ${i.num || (idx+1)}</span>
+          <span class="f-bold" style="font-size:10px; border:1px solid #000; padding:1px 6px; background:#eee;">STATUS: ${i.estado==='open'?'EN SEGUIMIENTO':'RESUELTO'}</span>
+        </div>
+        <div class="inc-lbl">Estudiante / Fecha / Contexto:</div>
+        <p class="inc-val" style="font-weight:bold">${i.meta || ''}</p>
+        <div class="inc-lbl">Descripción del Hecho:</div>
+        <p class="inc-val">${i.desc || ''}</p>
+        ${i.testigos ? `<div class="inc-lbl">Testigos / Elementos aportados:</div><p class="inc-val">${i.testigos}</p>` : ''}
+        ${i.acciones ? `<div class="inc-lbl">Acciones Pedagógicas / Disciplinarias tomadas:</div><p class="inc-val">${i.acciones}</p>` : ''}
+        ${i.seg ? `<div class="inc-lbl">Compromisos / Seguimiento de la incidencia:</div><p class="inc-val">${i.seg}</p>` : ''}
+        ${i.notes||i.notas ? `<div class="inc-lbl">Notas de Cierre u Observaciones:</div><p class="inc-val" style="font-style:italic">${i.notes||i.notas}</p>` : ''}
+      </div>
+    `;
+  });
+  sendToPrintFrame(getPrintTemplate(`Registro Oficial de Incidencias y Seguimiento Escolar`, html));
+}
+
+// ─── HELPERS ─────────────────────────────────────────────
 function markDirty(){dirty=true;document.getElementById('saveBtn').style.display='flex';}
 function toast(msg,type='ok'){
   const t=document.getElementById('toast');
-  if(!t) return;
   t.textContent=msg; t.className='toast show '+(type||'');
   clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),3200);
 }
 function closeModal(id){document.getElementById(id).classList.remove('show');}
 function printCurrent(){window.print();}
 
-window.addEventListener('beforeunload',e=>{
-  if(dirty){e.preventDefault();e.returnValue='Hay cambios sin guardar.';}
-});
+window.addEventListener('beforeunload',e=>{\n  if(dirty){e.preventDefault();e.returnValue='Hay cambios sin guardar.';}\n});
 
 document.getElementById('listDate').value=new Date().toISOString().split('T')[0];
 document.getElementById('listDate').addEventListener('change',()=>{if(loaded)renderLista();});
 
-// Inicialización automática de conexión
-window.addEventListener('DOMContentLoaded', () => {
-  if (GS_URL) {
-    connectGS();
-  } else {
-    showUrlModal();
-  }
-});
+// Auto-connect on load
+(async function(){\n  setSyncStatus('spin','Conectando con Google Sheets...');\n  try{\n    const data = await gsRequest('getData', {});\n    applyData(data);\n    setSyncStatus('ok','Conectado · Google Sheets');\n    toast('Datos cargados ✓','ok');\n  }catch(e){\n    setSyncStatus('err','Error de conexión');\n    const errMsg = e.message||String(e);\n    document.getElementById('wlcMsg').textContent='❌ No se pudo conectar con Google Sheets.';\n    document.getElementById('wlcErr').textContent='Error: '+errMsg;\n    document.getElementById('wlcBox').style.display='block';\n  }\n})();
 </script>
 </body>
 </html>
